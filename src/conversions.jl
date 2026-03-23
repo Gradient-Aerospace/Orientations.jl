@@ -146,10 +146,10 @@ Base.convert(::Type{RPY{T}}, dcm::DCM{T}) where {T} = dcm2rpy(dcm) # Type is not
 
 "Returns the AxisAngle for the given EulerRodriguesParameters."
 function erp2aa(erp::EulerRodriguesParameters{T}) where {T}
-    θ = 2 * acos(clamp(erp.s, -one(T), one(T)))
     m = sqrt(erp.x^2 + erp.y^2 + erp.z^2)
+    θ = 2 * atan(m, erp.s) # Better numerical stability than θ = 2 * acos(erp.s)
     if iszero(m)
-        r = SVector{3,T}(one(T), zero(T), zero(T))
+        r = SVector{3,T}(one(T), zero(T), zero(T)) # Arbitarily choose x.
     else
         r = SVector{3,T}(erp.x/m, erp.y/m, erp.z/m)
     end

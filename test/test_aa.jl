@@ -33,4 +33,11 @@
     @test c.angle ≈ π/2
     @test c.axis == SA[-1., 0., 0.]
 
+    # Really small rotation
+    a = AA(SA[0., 1., 0.], 1e-8)
+    erp = aa2erp(a)
+    b = erp2aa(erp)
+    @test a.axis ≈ b.axis atol = 1e-15
+    @test a.angle ≈ b.angle atol = 1e-15
+
 end
