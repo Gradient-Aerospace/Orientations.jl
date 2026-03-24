@@ -209,7 +209,8 @@ end
     @test dict["z"] == 3.
     @test dict["s"] == 4.
 
-    rand(ERP_F64)
+    rng = Xoshiro(1)
+    rand(rng, ERP_F64)
 
 end
 

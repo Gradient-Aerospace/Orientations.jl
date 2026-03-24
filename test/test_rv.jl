@@ -19,7 +19,8 @@ using LinearAlgebra
     @test interpolate(a, b, f) ≈ erp2rv(interpolate(rv2erp(a), rv2erp(b), f))
     @test inv(a) ≈ erp2rv(inv(rv2erp(a)))
 
-    rand(RV_F64) # Just test that we can do it.
+    rng = Xoshiro(1)
+    rand(rng, RV_F64) # Just test that we can do it.
 
     # Test conversions to all other types.
     tol = 1e-7

@@ -14,7 +14,8 @@
     @test interpolate(a, b, f) ≈ erp2aa(interpolate(aa2erp(a), aa2erp(b), f))
     @test inv(a) ≈ erp2aa(inv(aa2erp(a)))
 
-    rand(AA_F64) # Just test that we can do it.
+    rng = Xoshiro(1)
+    rand(rng, AA_F64) # Just test that we can do it.
 
     # Test conversions to all other types.
     tol = 1e-7
@@ -39,5 +40,24 @@
     b = erp2aa(erp)
     @test a.axis ≈ b.axis atol = 1e-15
     @test a.angle ≈ b.angle atol = 1e-15
+
+end
+
+@testset "AADeg zero and rand" begin
+
+    z = zero(AADeg)
+    @test z == AADeg(SA[1.0, 0.0, 0.0], 0.0)
+
+    z32 = zero(AADeg{Float32})
+    @test z32 == AADeg{Float32}(SA[1f0, 0f0, 0f0], 0f0)
+
+    rng = Xoshiro(1)
+    a = rand(rng, AADeg{Float64})
+    @test a isa AADeg{Float64}
+    @test isapprox(norm(a.axis), 1.0; atol = 1e-12)
+
+    b = rand(rng, AADeg{Float32})
+    @test b isa AADeg{Float32}
+    @test isapprox(norm(b.axis), 1f0; atol = 1f-5)
 
 end
