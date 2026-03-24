@@ -191,7 +191,7 @@ function erp2rpy(erp::EulerRodriguesParameters{T}) where {T}
     q1 = erp.x
     q2 = erp.y
     q3 = erp.z
-    tol = 1e-12
+    tol = 1e-12 # TODO: Make this type-aware. This is for Float64.
     sin_pitch = 2 * (q0 * q2 - q1 * q3)
     if sin_pitch >= one(T) - tol
         pitch = π/2

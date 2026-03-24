@@ -166,7 +166,7 @@ If `a` is the rotation of frame A wrt C and `b` is the rotation of frame
 B wrt C, then this function returns the rotation of A wrt B.
 """
 function difference(a::EulerRodriguesParameters, b::EulerRodriguesParameters)
-    return normalize(compose(a, inv(b)))
+    return compose(a, inv(b))
 end
 
 """
