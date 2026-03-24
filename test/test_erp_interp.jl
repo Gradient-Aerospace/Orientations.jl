@@ -30,11 +30,11 @@
         # Just test a variety of points that don't start from identity.
         a = erpx(deg2rad(10))
         b = erpx(deg2rad(40))
-        rad2deg(erp2aa(interpolate(a, b, 0.0)).angle) ≈ 10.
-        rad2deg(erp2aa(interpolate(a, b, 0.1)).angle) ≈ 10. + 0.1 * 30
-        rad2deg(erp2aa(interpolate(a, b, 0.5)).angle) ≈ 10. + 0.5 * 30
-        rad2deg(erp2aa(interpolate(a, b, 0.9)).angle) ≈ 10. + 0.9 * 30
-        rad2deg(erp2aa(interpolate(a, b, 1.0)).angle) ≈ 40.
+        @test rad2deg(erp2aa(interpolate(a, b, 0.0)).angle) ≈ 10.
+        @test rad2deg(erp2aa(interpolate(a, b, 0.1)).angle) ≈ 10. + 0.1 * 30
+        @test rad2deg(erp2aa(interpolate(a, b, 0.5)).angle) ≈ 10. + 0.5 * 30
+        @test rad2deg(erp2aa(interpolate(a, b, 0.9)).angle) ≈ 10. + 0.9 * 30
+        @test rad2deg(erp2aa(interpolate(a, b, 1.0)).angle) ≈ 40.
 
         # Also, test that zero rotation doesn't break anything.
         @test distance(interpolate(a, a, 0.4), a) ≈ 0. atol = eps(2π)
