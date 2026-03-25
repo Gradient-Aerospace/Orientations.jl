@@ -79,44 +79,65 @@ end
     @test aa_from_dcm_arb.angle ≈ angle_arbitrary atol=1e-10
     @test norm(aa_from_dcm_arb.axis .- axis_arbitrary) < 1e-10
 
-    # Test 6: Large angle (180 degrees), and mostly rotated about x
-    axis_180 = normalize(SA[2.0, 0.0, 1.0])
-    angle_180 = 1π
-    aa_180 = AxisAngle(axis_180, angle_180)
-    dcm_180 = aa2dcm(aa_180)
-    aa_from_dcm_180 = dcm2aa(dcm_180)
-    # This rotation could go either way.
-    if aa_from_dcm_180.angle < 0
-        @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
-        @test norm(aa_from_dcm_180.axis .- -axis_180) < 1e-10
-    else
-        @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
-        @test norm(aa_from_dcm_180.axis .- axis_180) < 1e-10
+    # Test 6: Let's rotate exactly pi about a variety of axes.
+    for x in -3. : 1. : 3.
+        for y in -3. : 1. : 3.
+            for z in -3. : 1. : 3.
+
+                # This would be an invalid axis.
+                if x == 0 && y == 0 && z == 0
+                    continue
+                end
+
+                axis = normalize(SA[x, y, z])
+                angle = 1π
+                aa_pi = AxisAngle(axis, angle)
+                dcm_pi = aa2dcm(aa_pi)
+                aa_from_dcm_pi = dcm2aa(dcm_pi)
+
+                # Did they go the other way around?
+                if aa_from_dcm_pi.axis ⋅ axis < 0
+                    @test norm(aa_from_dcm_pi.axis .- -axis) < 1e-10
+                else
+                    @test norm(aa_from_dcm_pi.axis .- axis) < 1e-10
+                end
+
+                # It should be pi no matter what.
+                @test aa_from_dcm_pi.angle ≈ angle atol=1e-10
+
+            end
+        end
     end
 
-    # Test 6(b): Large angle (not really less than 180 degrees), and mostly rotated about y
-    axis_180 = normalize(SA[2.0, -3.0, -1.0])
-    angle_180 = 1π - eps(1π) / 2
-    aa_180 = AxisAngle(axis_180, angle_180)
-    dcm_180 = aa2dcm(aa_180)
-    aa_from_dcm_180 = dcm2aa(dcm_180)
-    # This rotation could go either way.
-    if aa_from_dcm_180.angle < 0
-        @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
-        @test norm(aa_from_dcm_180.axis .- -axis_180) < 1e-10
-    else
-        @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
-        @test norm(aa_from_dcm_180.axis .- axis_180) < 1e-10
-    end
+    # Test 6(b): Slightly less than pi about a variety of axes.
+    for x in -3. : 1. : 3.
+        for y in -3. : 1. : 3.
+            for z in -3. : 1. : 3.
 
-    # Test 6(c): Large angle (just less than 180 degrees), and mostly rotated about z
-    axis_180 = normalize(SA[1.0, 2.0, 3.0])
-    angle_180 = 1π - 2 * eps(1π)
-    aa_180 = AxisAngle(axis_180, angle_180)
-    dcm_180 = aa2dcm(aa_180)
-    aa_from_dcm_180 = dcm2aa(dcm_180)
-    @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
-    @test norm(aa_from_dcm_180.axis .- axis_180) < 1e-10
+                # This would be an invalid axis.
+                if x == 0 && y == 0 && z == 0
+                    continue
+                end
+
+                axis = normalize(SA[x, y, z])
+                angle = 1π - 2 * eps(1π)
+                aa_pi = AxisAngle(axis, angle)
+                dcm_pi = aa2dcm(aa_pi)
+                aa_from_dcm_pi = dcm2aa(dcm_pi)
+
+                # Did they go the other way around?
+                if aa_from_dcm_pi.axis ⋅ axis < 0
+                    @test norm(aa_from_dcm_pi.axis .- -axis) < 1e-10
+                else
+                    @test norm(aa_from_dcm_pi.axis .- axis) < 1e-10
+                end
+
+                # The angle should be positive, so this should still be right.
+                @test aa_from_dcm_pi.angle ≈ angle atol=1e-10
+
+            end
+        end
+    end
 
     # Test 7: Small angle (very small rotation)
     axis_small = normalize(SA[1.0, 2.0, 3.0])
