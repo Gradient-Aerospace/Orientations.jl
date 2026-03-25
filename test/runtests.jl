@@ -1,4 +1,5 @@
 using Test
+using Random
 using GradientOrientations
 using GradientOrientations: AbstractOrientation
 using LinearAlgebra

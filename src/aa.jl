@@ -49,6 +49,14 @@ Base.zero(aa::AA) = zero(typeof(aa))
 Base.zero(::Type{<:AA}) = zero(AA_F64)
 Base.zero(::Type{AA{T}}) where {T} = AA{T}(SA[one(T), zero(T), zero(T)], zero(T))
 
+Base.zero(aa::AADeg) = zero(typeof(aa))
+Base.zero(::Type{<:AADeg}) = zero(AADeg_F64)
+Base.zero(::Type{AADeg{T}}) where {T} = AADeg{T}(SA[one(T), zero(T), zero(T)], zero(T))
+
+function Random.rand(rng::AbstractRNG, ::Random.SamplerType{AADeg{T}}) where {T}
+    return rad2deg(rand(rng, AA{T}))
+end
+
 ##############
 # Operations #
 ##############

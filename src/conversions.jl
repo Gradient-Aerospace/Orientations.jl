@@ -43,22 +43,51 @@ Base.convert(::Type{RPY{T}}, aa::AA{T}) where {T} = aa2rpy(aa) # Type is not spe
 
 "Returns the AxisAngle for the given DirectionCosineMatrix."
 function dcm2aa(dcm::DCM{T}) where {T}
+
     R = dcm.matrix
-    cos_angle = (tr(R) - 1) / 2
-    if cos_angle <= -one(T)
-        cos_angle = -one(T)
-    elseif cos_angle >= 1
+    vx = R[2, 3] - R[3, 2]
+    vy = R[3, 1] - R[1, 3]
+    vz = R[1, 2] - R[2, 1]
+
+    # Calculate angle from atan for best numerical stability.
+    s = sqrt(vx^2 + vy^2 + vz^2)
+    c = tr(R) - one(T)
+    angle = atan(s, c)
+
+    # Identity rotation (or sufficiently close to it).
+    if iszero(angle) || angle <= sqrt(eps(T))
         return AA{T}(SA[one(T), zero(T), zero(T)], zero(T))
     end
-    angle = acos(cos_angle)
-    axis = normalize(
-        SVector{3, T}(
-            R[2, 3] - R[3, 2],
-            R[3, 1] - R[1, 3],
-            R[1, 2] - R[2, 1],
-        ),
-    )
+
+    # Near pi, the skew-symmetric terms become too small for robust axis extraction.
+    sin_angle = s/T(2)
+    if sin_angle <= sqrt(eps(T))
+
+        ax = sqrt(max(zero(T), (R[1, 1] + one(T)) / T(2)))
+        ay = sqrt(max(zero(T), (R[2, 2] + one(T)) / T(2)))
+        az = sqrt(max(zero(T), (R[3, 3] + one(T)) / T(2)))
+
+        if ax >= ay && ax >= az
+            ay = copysign(ay, R[1, 2] + R[2, 1])
+            az = copysign(az, R[1, 3] + R[3, 1])
+        elseif ay >= ax && ay >= az
+            ax = copysign(ax, R[1, 2] + R[2, 1])
+            az = copysign(az, R[2, 3] + R[3, 2])
+        else
+            ax = copysign(ax, R[1, 3] + R[3, 1])
+            ay = copysign(ay, R[2, 3] + R[3, 2])
+        end
+
+        axis = normalize(SVector{3, T}(ax, ay, az))
+
+        return AA{T}(axis, angle)
+
+    end
+
+    axis = SVector{3, T}(vx/s, vy/s, vz/s)
+
     return AA{T}(axis, angle)
+
 end
 Base.convert(::Type{AA}, dcm::DCM) = dcm2aa(dcm) # Type is not specified on the LHS.
 Base.convert(::Type{AA{T}}, dcm::DCM{T}) where {T} = dcm2aa(dcm) # Type is not specified on the LHS.
@@ -191,7 +220,7 @@ function erp2rpy(erp::EulerRodriguesParameters{T}) where {T}
     q1 = erp.x
     q2 = erp.y
     q3 = erp.z
-    tol = 1e-12
+    tol = 1e-12 # TODO: Make this type-aware. This is for Float64.
     sin_pitch = 2 * (q0 * q2 - q1 * q3)
     if sin_pitch >= one(T) - tol
         pitch = π/2

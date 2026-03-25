@@ -18,7 +18,8 @@
     @test interpolate(a, b, f) ≈ erp2rpy(interpolate(rpy2erp(a), rpy2erp(b), f)) atol = rpy_tol
     @test inv(a) ≈ erp2rpy(inv(rpy2erp(a))) atol = rpy_tol
 
-    rand(RPY_F64) # Just test that we can do it.
+    rng = Xoshiro(1)
+    rand(rng, RPY_F64) # Just test that we can do it.
 
     # Test conversions to all other types.
     tol = 1e-7
@@ -46,5 +47,25 @@
     @test rpy.roll ≈ deg2rad(deg[1])
     @test rpy.pitch ≈ deg2rad(deg[2])
     @test rpy.yaw ≈ deg2rad(deg[3])
+
+end
+
+@testset "RPYDeg zero and rand" begin
+
+    z = zero(RPYDeg)
+    @test z == RPYDeg(0.0, 0.0, 0.0)
+
+    z32 = zero(RPYDeg{Float32})
+    @test z32 == RPYDeg{Float32}(0f0, 0f0, 0f0)
+
+    rng = Xoshiro(1)
+
+    a = rand(rng, RPYDeg{Float64})
+    @test a isa RPYDeg{Float64}
+    @test all(isfinite, (a.roll, a.pitch, a.yaw))
+
+    b = rand(rng, RPYDeg{Float32})
+    @test b isa RPYDeg{Float32}
+    @test all(isfinite, (b.roll, b.pitch, b.yaw))
 
 end
