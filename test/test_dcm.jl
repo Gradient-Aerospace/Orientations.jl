@@ -79,8 +79,8 @@ end
     @test aa_from_dcm_arb.angle ≈ angle_arbitrary atol=1e-10
     @test norm(aa_from_dcm_arb.axis .- axis_arbitrary) < 1e-10
 
-    # Test 6: Large angle (180 degrees)
-    axis_180 = normalize(SA[1.0, 0.0, 1.0])
+    # Test 6: Large angle (180 degrees), and mostly rotated about x
+    axis_180 = normalize(SA[2.0, 0.0, 1.0])
     angle_180 = 1π
     aa_180 = AxisAngle(axis_180, angle_180)
     dcm_180 = aa2dcm(aa_180)
@@ -93,6 +93,30 @@ end
         @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
         @test norm(aa_from_dcm_180.axis .- axis_180) < 1e-10
     end
+
+    # Test 6(b): Large angle (not really less than 180 degrees), and mostly rotated about y
+    axis_180 = normalize(SA[2.0, -3.0, -1.0])
+    angle_180 = 1π - eps(1π) / 2
+    aa_180 = AxisAngle(axis_180, angle_180)
+    dcm_180 = aa2dcm(aa_180)
+    aa_from_dcm_180 = dcm2aa(dcm_180)
+    # This rotation could go either way.
+    if aa_from_dcm_180.angle < 0
+        @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
+        @test norm(aa_from_dcm_180.axis .- -axis_180) < 1e-10
+    else
+        @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
+        @test norm(aa_from_dcm_180.axis .- axis_180) < 1e-10
+    end
+
+    # Test 6(c): Large angle (just less than 180 degrees), and mostly rotated about z
+    axis_180 = normalize(SA[1.0, 2.0, 3.0])
+    angle_180 = 1π - 2 * eps(1π)
+    aa_180 = AxisAngle(axis_180, angle_180)
+    dcm_180 = aa2dcm(aa_180)
+    aa_from_dcm_180 = dcm2aa(dcm_180)
+    @test aa_from_dcm_180.angle ≈ angle_180 atol=1e-10
+    @test norm(aa_from_dcm_180.axis .- axis_180) < 1e-10
 
     # Test 7: Small angle (very small rotation)
     axis_small = normalize(SA[1.0, 2.0, 3.0])
@@ -117,5 +141,48 @@ end
     @test typeof(aa_from_dcm_typed) <: AxisAngle{Float64}
     @test typeof(aa_from_dcm_typed.axis) <: SVector{3, Float64}
     @test typeof(aa_from_dcm_typed.angle) <: Float64
+
+end
+
+@testset "dcm2aa numerical stability near pi" begin
+
+    # Baseline (the previous skew-only implementation) can be inaccurate near pi because
+    # R23-R32, R31-R13, and R12-R21 collapse toward zero as sin(theta) -> 0. For this test
+    # case, the baseline error is around 1e-3 rad.
+    function dcm2aa_baseline(dcm::DCM{T}) where {T}
+        R = dcm.matrix
+        cos_angle = (tr(R) - one(T)) / T(2)
+        if cos_angle <= -one(T)
+            cos_angle = -one(T)
+        elseif cos_angle >= one(T)
+            return AA{T}(SA[one(T), zero(T), zero(T)], zero(T))
+        end
+        angle = acos(cos_angle)
+        axis = normalize(
+            SVector{3, T}(
+                R[2, 3] - R[3, 2],
+                R[3, 1] - R[1, 3],
+                R[1, 2] - R[2, 1],
+            ),
+        )
+        return AA{T}(axis, angle)
+    end
+
+    axis = normalize(SA[0.29375010045565614, 0.33943374564517836, -0.8935858161360756])
+    angle = 3.141592653589759
+    # pi is 3.141592653589793, so we're testing slightly less.
+
+    aa_true = AA(axis, angle)
+    dcm = aa2dcm(aa_true)
+
+    aa_baseline = dcm2aa_baseline(dcm)
+    aa_improved = dcm2aa(dcm)
+
+    baseline_err = distance(aa_baseline, aa_true)
+    improved_err = distance(aa_improved, aa_true)
+
+    @test baseline_err > 1e-4
+    @test improved_err < baseline_err
+    @test improved_err < 1e-8
 
 end
