@@ -272,6 +272,11 @@ end
     # Other way around
     @test distance(erpx(2π + θ)) ≈ θ
     @test distance(other(erpy(θ))) ≈ θ
+    for θ in (1e-8, 1e-10, 1e-12)
+        @test distance(erpx(θ)) ≈ θ atol = eps(1.)
+        @test distance(other(erpx(θ))) ≈ θ atol = eps(1.)
+        @test distance(2 * erpx(θ)) ≈ θ atol = eps(1.)
+    end
 
     # Two-argument versions:
 
@@ -281,6 +286,11 @@ end
     # Other way around
     @test distance(erpx(2π + θ), zero(ERP{Float64})) ≈ θ
     @test distance(other(erpy(θ)), zero(ERP{Float64})) ≈ θ
+    for θ in (1e-8, 1e-10, 1e-12)
+        @test distance(erpx(θ), zero(ERP{Float64})) ≈ θ atol = eps(1.)
+        @test distance(other(erpx(θ)), zero(ERP{Float64})) ≈ θ atol = eps(1.)
+        @test distance(2 * erpx(θ), 3 * zero(ERP{Float64})) ≈ θ atol = eps(1.)
+    end
 
 end
 
