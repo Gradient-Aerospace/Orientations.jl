@@ -338,3 +338,28 @@ function rpy2rv(rpy::RPY)
 end
 Base.convert(::Type{RV}, rpy::RPY) = rpy2rv(rpy) # Type is not specified on the LHS.
 Base.convert(::Type{RV{T}}, rpy::RPY{T}) where {T} = rpy2rv(rpy) # Type is not specified on the LHS.
+
+####################################
+# Fallback Orientation Conversions #
+####################################
+
+Base.convert(::Type{AA{T}}, aa::AA) where {T} = AA{T}(SVector{3, T}(aa.axis), convert(T, aa.angle))
+Base.convert(::Type{AADeg{T}}, aa::AADeg) where {T} = AADeg{T}(SVector{3, T}(aa.axis), convert(T, aa.angle))
+Base.convert(::Type{DCM{T}}, dcm::DCM) where {T} = DCM{T}(SMatrix{3, 3, T, 9}(dcm.matrix))
+Base.convert(::Type{ERP{T}}, erp::ERP) where {T} = ERP{T}(convert(T, erp.x), convert(T, erp.y), convert(T, erp.z), convert(T, erp.s))
+Base.convert(::Type{RPY{T}}, rpy::RPY) where {T} = RPY{T}(convert(T, rpy.roll), convert(T, rpy.pitch), convert(T, rpy.yaw))
+Base.convert(::Type{RPYDeg{T}}, rpy::RPYDeg) where {T} = RPYDeg{T}(convert(T, rpy.roll), convert(T, rpy.pitch), convert(T, rpy.yaw))
+Base.convert(::Type{RV{T}}, rv::RV) where {T} = RV{T}(SVector{3, T}(rv.vector))
+
+Base.convert(::Type{AA}, a::AbstractOrientation{T}) where {T} = convert(AA{T}, a)
+Base.convert(::Type{AADeg}, a::AbstractOrientation{T}) where {T} = convert(AADeg{T}, a)
+Base.convert(::Type{DCM}, a::AbstractOrientation{T}) where {T} = convert(DCM{T}, a)
+Base.convert(::Type{ERP}, a::AbstractOrientation{T}) where {T} = convert(ERP{T}, a)
+Base.convert(::Type{RPY}, a::AbstractOrientation{T}) where {T} = convert(RPY{T}, a)
+Base.convert(::Type{RPYDeg}, a::AbstractOrientation{T}) where {T} = convert(RPYDeg{T}, a)
+Base.convert(::Type{RV}, a::AbstractOrientation{T}) where {T} = convert(RV{T}, a)
+
+function Base.convert(::Type{OT}, a::AbstractOrientation) where {T, OT <: AbstractOrientation{T}}
+    erp = a isa ERP ? a : convert(ERP, a)
+    return convert(OT, convert(ERP{T}, erp))
+end

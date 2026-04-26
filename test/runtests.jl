@@ -123,3 +123,43 @@ end
     @test erp ≈ erpx(π/2)
 
 end
+
+@testset "conversion holes" begin
+
+    aa = AxisAngle(2. .* [1., 0., 0.], 0.5)
+    @test aa isa AA_F64
+    @test aa.axis == SA[2., 0., 0.]
+    @test AA{Float32}([1., 0., 0.], 0.5) isa AA{Float32}
+
+    rv = RV([1., 2., 3.])
+    @test rv == RV(SA[1., 2., 3.])
+    @test RV{Float32}([1., 2., 3.]) isa RV{Float32}
+
+    m32 = Matrix{Float32}(I, 3, 3)
+    @test DCM(m32) isa DCM{Float32}
+    @test DCM{Float64}(m32) isa DCM_F64
+    @test convert(DCM, m32) ≈ zero(DCM{Float32})
+    @test convert(DCM_F64, m32) ≈ zero(DCM_F64)
+
+    aa_deg = AADeg([1., 0., 0.], 90.)
+    @test convert(DCM, aa_deg) ≈ erpx(π/2)
+    @test convert(RV, aa_deg) ≈ erpx(π/2)
+    @test convert(RPY, aa_deg) ≈ erpx(π/2)
+    @test convert(DCM{Float32}, aa_deg) isa DCM{Float32}
+
+    rpy_deg = RPYDeg(1., 2., 3.)
+    @test convert(AA, rpy_deg) ≈ convert(ERP, rpy_deg)
+    @test convert(DCM, rpy_deg) ≈ convert(ERP, rpy_deg)
+    @test convert(RV, rpy_deg) ≈ convert(ERP, rpy_deg)
+    @test convert(RV{Float32}, rpy_deg) isa RV{Float32}
+
+    rpy32 = RPY{Float32}(0.1f0, 0.2f0, 0.3f0)
+    @test convert(AA_F64, rpy32) isa AA_F64
+    @test convert(DCM_F64, rpy32) isa DCM_F64
+    @test convert(ERP_F64, rpy32) isa ERP_F64
+    @test convert(RPY_F64, rpy32) isa RPY_F64
+    @test convert(RV_F64, rpy32) isa RV_F64
+    @test convert(AADeg_F64, rpy32) isa AADeg_F64
+    @test convert(RPYDeg_F64, rpy32) isa RPYDeg_F64
+
+end

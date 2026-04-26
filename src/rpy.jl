@@ -46,8 +46,10 @@ Base.rad2deg(rpy::RPY{T}) where {T} = RPYDeg{T}(
     rad2deg(rpy.yaw),
 )
 
-Base.convert(::Type{<:RPY}, rpy_deg::RPYDeg) = deg2rad(rpy_deg)
-Base.convert(::Type{<:RPYDeg}, rpy::RPY) = rad2deg(rpy)
+Base.convert(::Type{RPY}, rpy_deg::RPYDeg) = deg2rad(rpy_deg)
+Base.convert(::Type{RPY{T}}, rpy_deg::RPYDeg) where {T} = convert(RPY{T}, deg2rad(rpy_deg))
+Base.convert(::Type{RPYDeg}, rpy::RPY) = rad2deg(rpy)
+Base.convert(::Type{RPYDeg{T}}, rpy::RPY) where {T} = convert(RPYDeg{T}, rad2deg(rpy))
 
 ################
 # Constructors #

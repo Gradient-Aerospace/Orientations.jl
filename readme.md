@@ -109,6 +109,7 @@ For `AxisAngle`, provide the axis first and then the angle:
 
 ```julia
 AA(SA[1., 0., 0.], 0.)
+AA([1., 0., 0.], 0.)
 ```
 
 The constructor stores the axis exactly as provided; it does not normalize the axis.
@@ -127,6 +128,11 @@ DCM(
         0. 0. 1.;
     ]
 )
+DCM([
+    1. 0. 0.;
+    0. 1. 0.;
+    0. 0. 1.;
+])
 ```
 
 For convenience, `Rx`, `Ry`, and `Rz` exist to create DCMs rotated about a given primary axis.
@@ -144,6 +150,7 @@ For `RotationVector`, give the vector:
 
 ```julia
 RV(SA[0., 0., 0.])
+RV([0., 0., 0.])
 ```
 
 For `RollPitchYaw`, provide roll, pitch, and yaw:
