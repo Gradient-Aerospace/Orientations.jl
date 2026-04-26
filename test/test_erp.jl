@@ -114,6 +114,21 @@ end
     @test difference(ep2, ep) ≈ compose(rv2erp(RV(w * dt)), ep) atol = w_mag * dt * 1e-3
     @test distance(ep2, ep) ≈ w_mag * dt atol = w_mag * dt * 1e-3
 
+    # For non-identity orientations, `rate` expects angular velocity expressed in the
+    # frame on the left side of the orientation name.
+    ep = normalize(ERP(0.2, -0.3, 0.4, 0.8))
+    w_B = SA[0.7, -0.2, 0.5]
+    dt = 1e-7
+    ep2 = normalize(ep + dt * rate(ep, w_B, 0.))
+    ep_expected = compose(rv2erp(RV(w_B * dt)), ep)
+    @test ep2 ≈ ep_expected atol = 1e-12
+
+    w_A = reframe(inv(ep), w_B)
+    ep2_from_A = normalize(ep + dt * rate(ep, reframe(ep, w_A), 0.))
+    ep_expected_from_A = compose(ep, rv2erp(RV(w_A * dt)))
+    @test ep2_from_A ≈ ep_expected_from_A atol = 1e-12
+    @test distance(normalize(ep + dt * rate(ep, w_A, 0.)), ep_expected) > 1e-9
+
 end
 
 @testset "rate norm correction" begin

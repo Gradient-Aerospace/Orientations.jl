@@ -94,7 +94,7 @@ The `⊗` operator (`\otimes`) can also be used for composition. That is, `a ⊗
 
 For `EulerRodriguesParameters`:
 
-* `rate(erp_b_wrt_a, omega_b_wrt_a_in_b)`: Returns the derivative over time of the given ERP using the given rotation rate. The return type will be an ERP type, though obviously it will not have a unit norm and will not, itself, represent an orientation. This is useful for numerical integration. While all types could conceivably implement this function, this package only implements it for `EulerRodriguesParameters` since it has the best numerical properties.
+* `rate(erp_b_wrt_a, omega_b_wrt_a_in_b)`: Returns the derivative over time of the given ERP using the given rotation rate. The rotation rate must be expressed in frame B; if you have `omega_b_wrt_a_in_a`, convert it first with `reframe(erp_b_wrt_a, omega_b_wrt_a_in_a)`. The return type will be an ERP type, though obviously it will not have a unit norm and will not, itself, represent an orientation. This is useful for numerical integration. While all types could conceivably implement this function, this package only implements it for `EulerRodriguesParameters` since it has the best numerical properties.
 * `other`: Returns an ERP that rotates "the other way around".
 * `smallest`: Returns an ERP that is equivalent to the input but is the "shortest way around".
 * `LinearAlgebra.normalize`: Returns a normalized version of an ERP -- useful after operations such as numerical integration.
