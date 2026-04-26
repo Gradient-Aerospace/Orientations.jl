@@ -37,6 +37,11 @@ using LinearAlgebra
     @test distance(dcm) ≈ 0.2
     dcm = Rz(3π/2)
     @test distance(dcm) ≈ π/2
+    for θ in (1e-8, 1e-10, 1e-12)
+        @test distance(Rx(θ)) ≈ θ atol = eps(1.)
+        @test distance(Ry(θ)) ≈ θ atol = eps(1.)
+        @test distance(Rz(θ)) ≈ θ atol = eps(1.)
+    end
 
 end
 

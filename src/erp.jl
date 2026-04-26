@@ -174,8 +174,7 @@ If `a` is the rotation of frame A wrt C and `b` is the rotation of frame
 B wrt C, then this function returns the angle by which A is rotated from C (smallest angle).
 """
 function distance(a::EulerRodriguesParameters, b::EulerRodriguesParameters)
-    s = abs(a.x * b.x + a.y * b.y + a.z * b.z + a.s * b.s)
-    return 2 * acos(clamp(s, zero(typeof(s)), one(typeof(s))))
+    return distance(difference(a, b))
 end
 
 """
@@ -183,7 +182,7 @@ Returns the "distance" (non-negative angle, the "short way around") of the ERP w
 reference orientation.
 """
 function distance(a::EulerRodriguesParameters{T}) where {T}
-    return 2 * acos(clamp(abs(a.s), zero(T), one(T)))
+    return 2 * atan(sqrt(a.x^2 + a.y^2 + a.z^2), abs(a.s))
 end
 
 """
@@ -247,18 +246,20 @@ function interpolate(ep_start::EulerRodriguesParameters{T}, ep_end::EulerRodrigu
     #
 
     d = dot(ep_start, ep_end)
-    if d >= one(T)
-        return ep_start
-    elseif d <= -one(T)
+    if d <= -one(T) && !shortest_path
         return ep_start
     end
-    θ = acos(clamp(abs(d), zero(T), one(T)))
 
     if shortest_path
         # Flip `ep_start` if there is a shorter path.
         ep_startp = d >= 0 ? ep_start : other(ep_start)
     else
         ep_startp = ep_start
+    end
+
+    θ = acos(clamp(abs(d), zero(T), one(T)))
+    if θ <= sqrt(eps(float(T)))
+        return normalize((1 - f) * ep_startp + f * ep_end)
     end
 
     # If -1 < cos(θ) < 1, then sin(θ) should be > 0.

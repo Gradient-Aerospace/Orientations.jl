@@ -105,7 +105,7 @@ Base.inv(dcm::DCM) = DCM(dcm.matrix')
 compose(a::DCM, b::DCM) = DCM(a.matrix * b.matrix)
 reframe(dcm::DCM, v) = dcm.matrix * v
 difference(a::DCM, b::DCM) = DCM(a.matrix * b.matrix')
-distance(dcm::DCM{T}) where {T} = acos(clamp((tr(dcm.matrix) - 1) / 2, -one(T), one(T)))
+distance(dcm::DCM) = distance(dcm2erp(dcm))
 interpolate(a::DCM, b::DCM, f) = erp2dcm(interpolate(dcm2erp(a), dcm2erp(b), f))
 
 ###################
