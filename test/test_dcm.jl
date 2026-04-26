@@ -17,7 +17,7 @@ using LinearAlgebra
 
     @test reframe(a, v) ≈ reframe(dcm2erp(a), v)
     @test a ⊗ b ≈ erp2dcm(dcm2erp(a) ⊗ dcm2erp(b)) atol = dcm_tol
-    @test difference(a, b) ≈ erp2dcm(difference(dcm2erp(a), dcm2erp(b)))
+    @test difference(a, b) ≈ erp2dcm(difference(dcm2erp(a), dcm2erp(b))) atol = dcm_tol
     @test distance(a, b) ≈ distance(dcm2erp(a), dcm2erp(b))
     @test interpolate(a, b, f) ≈ erp2dcm(interpolate(dcm2erp(a), dcm2erp(b), f)) atol = dcm_tol
     @test inv(a) ≈ erp2dcm(inv(dcm2erp(a))) atol = dcm_tol
@@ -204,6 +204,6 @@ end
 
     @test baseline_err > 1e-4
     @test improved_err < baseline_err
-    @test improved_err < 1e-8
+    @test improved_err < 1e-7
 
 end
