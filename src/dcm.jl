@@ -85,13 +85,8 @@ function Rz(θ)
     )
 end
 
-# Note that zero means "no rotation". You might be tempted to try `one` because you're
-# thinking of an identity matrix, but that's not the right concept here! A "one" orientation
-# would be an orientation displaced by "one unit" (and about what??) from a reference
-# orientation.
-Base.zero(dcm::DCM{T}) where {T} = zero(typeof(dcm))
-Base.zero(::Type{DCM}) = zero(DCM_F64)
-Base.zero(::Type{DCM{T}}) where {T} = DCM(one(SMatrix{3, 3, T, 9})) # <- A bit ironic...
+Base.one(::Type{DCM}) = one(DCM_F64)
+Base.one(::Type{DCM{T}}) where {T} = DCM(one(SMatrix{3, 3, T, 9}))
 
 "Converts a matrix to a DirectionCosineMatrix."
 function Base.convert(::Type{DCM}, m::AbstractMatrix)

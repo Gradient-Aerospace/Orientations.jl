@@ -10,7 +10,7 @@ using LinearAlgebra
     v = SA[5., 2., -4.]
     f = 0.1
 
-    @test dcm2erp(zero(DCM_F64)) ≈ zero(ERP_F64)
+    @test dcm2erp(one(DCM_F64)) ≈ one(ERP_F64)
 
     # Triggy conversions have much worse tolerances than the non-trig types.
     dcm_tol = 1e-7

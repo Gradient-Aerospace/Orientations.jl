@@ -119,8 +119,22 @@ end
     @test erp2dcm(erp) ≈ erp
     @test erp2rpy(erp) ≈ erp
     @test erp2rv(erp) ≈ erp
-    @test erpx(1e-8) ≈ zero(ERP_F64) atol = 1.1e-8
-    @test !isapprox(erpx(1e-8), zero(ERP_F64); atol = 0.9e-8)
+    @test erpx(1e-8) ≈ one(ERP_F64) atol = 1.1e-8
+    @test !isapprox(erpx(1e-8), one(ERP_F64); atol = 0.9e-8)
+
+end
+
+@testset "identity orientation" begin
+
+    @test one(ERP_F64) == ERP(0., 0., 0., 1.)
+    @test one(AA_F64) == AA(SA[1., 0., 0.], 0.)
+    @test one(DCM_F64) == DCM(SMatrix{3, 3, Float64, 9}(I))
+    @test one(RPY_F64) == RPY(0., 0., 0.)
+    @test one(RV_F64) == RV(SA[0., 0., 0.])
+    @test identity_orientation(ERP_F64) == one(ERP_F64)
+    @test identity_orientation(erpx(0.2)) == one(ERP_F64)
+    @test_throws MethodError zero(ERP_F64)
+    @test_throws MethodError zero(DCM_F64)
 
 end
 
@@ -138,8 +152,8 @@ end
     m32 = Matrix{Float32}(I, 3, 3)
     @test DCM(m32) isa DCM{Float32}
     @test DCM{Float64}(m32) isa DCM_F64
-    @test convert(DCM, m32) ≈ zero(DCM{Float32})
-    @test convert(DCM_F64, m32) ≈ zero(DCM_F64)
+    @test convert(DCM, m32) ≈ one(DCM{Float32})
+    @test convert(DCM_F64, m32) ≈ one(DCM_F64)
 
     aa_deg = AADeg([1., 0., 0.], 90.)
     @test convert(DCM, aa_deg) ≈ erpx(π/2)

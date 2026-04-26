@@ -34,10 +34,10 @@ function Base.convert(type::Type{<:EulerRodriguesParameters}, v::AbstractVector)
 end
 
 "Creates a EulerRodriguesParameters representing no rotation."
-Base.zero(::ERP{T}) where {T} = ERP{T}(zero(T), zero(T), zero(T), one(T))
+Base.one(::Type{ERP}) = one(ERP_F64)
 
 "Creates a EulerRodriguesParameters representing no rotation."
-Base.zero(::Type{ERP{T}}) where {T} = ERP{T}(zero(T), zero(T), zero(T), one(T))
+Base.one(::Type{ERP{T}}) where {T} = ERP{T}(zero(T), zero(T), zero(T), one(T))
 
 "Create a random EulerRodriguesParameters following a uniform distribution on SO(3)."
 function Random.rand(rng::AbstractRNG, ::Random.SamplerType{ERP{T}}) where {T}

@@ -32,7 +32,7 @@ end
     R2 = erp2dcm(ep_from_rv).matrix
     @test R2 ≈ R atol=1e-12
 
-    @test rv2erp(RV(SA[0., 0., 0.])) == zero(ERP{Float64})
+    @test rv2erp(RV(SA[0., 0., 0.])) == one(ERP{Float64})
 
     @test all(dcm2erp(DCM_F64(@SMatrix [ 1 0 0; 0 -1 0; 0 0 -1])) .≈ ERP(1., 0., 0., 0.))
     @test all(dcm2erp(DCM_F64(@SMatrix [-1 0 0; 0  1 0; 0 0 -1])) .≈ ERP(0., 1., 0., 0.))
@@ -108,7 +108,7 @@ end
     r = normalize(SA[1., 2., 3.])
     w_mag = 3.
     w = w_mag * r
-    ep = zero(ERP_F64)
+    ep = one(ERP_F64)
     dt = 1e-6
     ep2 = normalize(ep + dt * rate(ep, w))
     @test difference(ep2, ep) ≈ compose(rv2erp(RV(w * dt)), ep) atol = w_mag * dt * 1e-3
@@ -254,10 +254,10 @@ end
     b3 = normalize(a)
     b4 = normalize(other(a))
 
-    @test distance(difference(a, b1), zero(ERP{Float64})) ≈ 0 atol = eps(1.)
-    @test distance(difference(a, b2), zero(ERP{Float64})) ≈ 0 atol = eps(1.)
-    @test distance(difference(a, b3), zero(ERP{Float64})) ≈ 0 atol = eps(1.)
-    @test distance(difference(a, b4), zero(ERP{Float64})) ≈ 0 atol = eps(1.)
+    @test distance(difference(a, b1), one(ERP{Float64})) ≈ 0 atol = eps(1.)
+    @test distance(difference(a, b2), one(ERP{Float64})) ≈ 0 atol = eps(1.)
+    @test distance(difference(a, b3), one(ERP{Float64})) ≈ 0 atol = eps(1.)
+    @test distance(difference(a, b4), one(ERP{Float64})) ≈ 0 atol = eps(1.)
 
 end
 
@@ -295,16 +295,16 @@ end
 
     # Two-argument versions:
 
-    @test distance(erpx(θ), zero(ERP{Float64})) ≈ θ
-    @test distance(erpy(θ), zero(ERP{Float64})) ≈ θ
+    @test distance(erpx(θ), one(ERP{Float64})) ≈ θ
+    @test distance(erpy(θ), one(ERP{Float64})) ≈ θ
 
     # Other way around
-    @test distance(erpx(2π + θ), zero(ERP{Float64})) ≈ θ
-    @test distance(other(erpy(θ)), zero(ERP{Float64})) ≈ θ
+    @test distance(erpx(2π + θ), one(ERP{Float64})) ≈ θ
+    @test distance(other(erpy(θ)), one(ERP{Float64})) ≈ θ
     for θ in (1e-8, 1e-10, 1e-12)
-        @test distance(erpx(θ), zero(ERP{Float64})) ≈ θ atol = eps(1.)
-        @test distance(other(erpx(θ)), zero(ERP{Float64})) ≈ θ atol = eps(1.)
-        @test distance(2 * erpx(θ), 3 * zero(ERP{Float64})) ≈ θ atol = eps(1.)
+        @test distance(erpx(θ), one(ERP{Float64})) ≈ θ atol = eps(1.)
+        @test distance(other(erpx(θ)), one(ERP{Float64})) ≈ θ atol = eps(1.)
+        @test distance(2 * erpx(θ), 3 * one(ERP{Float64})) ≈ θ atol = eps(1.)
     end
 
 end

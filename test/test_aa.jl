@@ -5,7 +5,7 @@
     v = SA[5., 2., -4.]
     f = 0.1
 
-    @test aa2erp(zero(AA_F64)) ≈ zero(ERP_F64)
+    @test aa2erp(one(AA_F64)) ≈ one(ERP_F64)
 
     @test reframe(a, v) ≈ reframe(aa2erp(a), v)
     @test a ⊗ b ≈ erp2aa(aa2erp(a) ⊗ aa2erp(b))
@@ -56,12 +56,12 @@
 
 end
 
-@testset "AADeg zero and rand" begin
+@testset "AADeg one and rand" begin
 
-    z = zero(AADeg)
+    z = one(AADeg)
     @test z == AADeg(SA[1.0, 0.0, 0.0], 0.0)
 
-    z32 = zero(AADeg{Float32})
+    z32 = one(AADeg{Float32})
     @test z32 == AADeg{Float32}(SA[1f0, 0f0, 0f0], 0f0)
 
     rng = Xoshiro(1)
