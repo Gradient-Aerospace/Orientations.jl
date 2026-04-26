@@ -106,6 +106,13 @@ function distance(a::T, b::T) where {T <: AbstractOrientation}
 end
 
 """
+Compares two orientations by angular distance in radians.
+"""
+function Base.isapprox(a::AbstractOrientation, b::AbstractOrientation; atol = eps(4π), rtol = zero(atol), kwargs...)
+    return distance(convert(ERP, a), convert(ERP, b)) <= max(atol, rtol * max(distance(a), distance(b)))
+end
+
+"""
     interpolate(a, b, t; shortest_path = true)
 
 Spherical linear interpolation between two orientations.

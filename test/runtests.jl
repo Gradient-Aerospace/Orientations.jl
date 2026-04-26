@@ -7,19 +7,6 @@ using StaticArrays
 
 import GradientOrientations: crs3
 
-# By default, this is pretty tight.
-Base.isapprox(a::ERP, b::ERP; atol = eps(4π)) = distance(normalize(a), normalize(b)) <= atol
-
-# Obviously, by relying on ERP conversion to test all orientations, we should do a good job
-# of making sure the ERP stuff is right on its own (separate from these tests).
-function Base.isapprox(a::AbstractOrientation, b::AbstractOrientation; kwargs...)
-    return isapprox(
-        convert(ERP, a),
-        convert(ERP, b);
-        kwargs...
-    )
-end
-
 include("test_aa.jl")
 include("test_dcm.jl")
 include("test_erp.jl")
@@ -121,6 +108,19 @@ end
     aa = AADeg_F64(SA[1., 0., 0.], 90)
     erp = convert(ERP, aa)
     @test erp ≈ erpx(π/2)
+
+end
+
+@testset "orientation isapprox" begin
+
+    erp = normalize(ERP(1., -2., 3., -4.))
+    @test erp ≈ other(erp)
+    @test erp2aa(erp) ≈ erp
+    @test erp2dcm(erp) ≈ erp
+    @test erp2rpy(erp) ≈ erp
+    @test erp2rv(erp) ≈ erp
+    @test erpx(1e-8) ≈ zero(ERP_F64) atol = 1.1e-8
+    @test !isapprox(erpx(1e-8), zero(ERP_F64); atol = 0.9e-8)
 
 end
 
