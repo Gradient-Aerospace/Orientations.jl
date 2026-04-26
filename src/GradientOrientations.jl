@@ -14,7 +14,7 @@ All subtypes of AbstractOrientation are expected to support:
 * distance(orientation)
 * distance(a, b)
 * interpolate(a, b, fraction)
-* Base.zero
+* Base.one
 * Base.inv
 * Random.rand
 
@@ -32,7 +32,7 @@ direct conversions exist, those are helpful to implement as well.
 abstract type AbstractOrientation{T} end
 
 # Necessary things
-export reframe, compose, difference, distance, interpolate
+export reframe, compose, difference, distance, interpolate, identity_orientation
 
 # May not exist for all orientation types
 export other, smallest, rate
@@ -132,16 +132,26 @@ end
 
 "Returns the element type used by this orientation."
 Base.eltype(::AbstractOrientation{T}) where {T} = T
+Base.eltype(::Type{OT}) where {T, OT <: AbstractOrientation{T}} = T
 
 """
 Returns an orientation that is not rotated from its reference, using the same type as the input.
 """
-Base.zero(x::AbstractOrientation) = zero(typeof(x))
+Base.one(x::AbstractOrientation) = one(typeof(x))
 
 """
 Returns an orientation that is not rotated from its reference, using the given type.
 """
-Base.zero(type::Type{<:AbstractOrientation}) = zero(ERP{eltype(type)})
+Base.one(type::Type{OT}) where {T, OT <: AbstractOrientation{T}} = convert(OT, one(ERP{T}))
+
+"""
+    identity_orientation(x::AbstractOrientation)
+    identity_orientation(::Type{<:AbstractOrientation})
+
+Returns an orientation that is not rotated from its reference.
+"""
+identity_orientation(x::AbstractOrientation) = one(x)
+identity_orientation(type::Type{<:AbstractOrientation}) = one(type)
 
 """
 Inverts the orientation such that if the input is the orientation of B wrt A, this returns

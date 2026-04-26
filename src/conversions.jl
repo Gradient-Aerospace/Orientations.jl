@@ -261,7 +261,7 @@ Base.convert(::Type{RPYDeg{T}}, erp::ERP{T}) where {T} = rad2deg(erp2rpy(erp))
 function rv2aa(rv::RV{T}) where {T}
     θ = norm(rv.vector)
     if iszero(θ) # If no rotation...
-        return zero(AA{T})
+        return one(AA{T})
     end
     return AA{T}(rv.vector ./ θ, θ)
 end

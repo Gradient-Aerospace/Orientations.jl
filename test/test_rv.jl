@@ -10,7 +10,7 @@ using LinearAlgebra
     v = SA[5., 2., -4.]
     f = 0.1
 
-    @test rv2erp(zero(RV_F64)) ≈ zero(ERP_F64)
+    @test rv2erp(one(RV_F64)) ≈ one(ERP_F64)
 
     @test reframe(a, v) ≈ reframe(rv2erp(a), v)
     @test a ⊗ b ≈ erp2rv(rv2erp(a) ⊗ rv2erp(b))

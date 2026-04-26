@@ -31,9 +31,8 @@ end
 
 Base.convert(type::Type{<:RV}, v::AbstractVector) = type(v)
 
-Base.zero(rv::RV{T}) where {T} = zero(typeof(rv))
-Base.zero(::Type{RV}) = zero(RV_F64)
-Base.zero(::Type{RV{T}}) where {T} = RV(zero(SVector{3, T}))
+Base.one(::Type{RV}) = one(RV_F64)
+Base.one(::Type{RV{T}}) where {T} = RV(zero(SVector{3, T}))
 
 # TODO: We could do the deg2rad/rad2deg thing here too.
 

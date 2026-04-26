@@ -43,7 +43,7 @@
 
     @testset "Small-angle interpolation" begin
 
-        ep_start = zero(ERP_F64)
+        ep_start = one(ERP_F64)
         for θ in (1e-8, 1e-10, 1e-12)
             expected = erpx(θ / 2)
             @test distance(interpolate(ep_start, erpx(θ), 0.5), expected) ≈ 0. atol = eps(1.)

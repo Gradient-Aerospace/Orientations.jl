@@ -5,7 +5,7 @@
     v = SA[5., 2., -4.]
     f = 0.1
 
-    @test rv2erp(zero(RV_F64)) ≈ zero(ERP_F64)
+    @test rv2erp(one(RV_F64)) ≈ one(ERP_F64)
 
     rpy_tol = 1e-7
 
@@ -69,12 +69,12 @@ end
 
 end
 
-@testset "RPYDeg zero and rand" begin
+@testset "RPYDeg one and rand" begin
 
-    z = zero(RPYDeg)
+    z = one(RPYDeg)
     @test z == RPYDeg(0.0, 0.0, 0.0)
 
-    z32 = zero(RPYDeg{Float32})
+    z32 = one(RPYDeg{Float32})
     @test z32 == RPYDeg{Float32}(0f0, 0f0, 0f0)
 
     rng = Xoshiro(1)

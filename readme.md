@@ -87,7 +87,7 @@ rpy_b_wrt_a = erp2rpy(erp_b_wrt_a)
 * `distance`: Returns the rotation angle of the orientation, the "smallest way around", in radians.
 * `interpolate(o1, o2, f)`: Interpolates (spherically) from orientation 1 to orientation 2 (both wrt the same reference) using `f` in the inclusive range [0, 1].
 * `Base.inv(b_wrt_a)`: Inverts the orientation, returning A wrt B.
-* `Base.zero(type)`: Returns an orientation of the given type with zero rotation from the reference.
+* `Base.one(type)` / `identity_orientation(type)`: Returns an orientation of the given type with zero rotation from the reference.
 * `Random.rand(rng, type)`: Returns a random orientation of the given type (any of the available orientation types) drawn uniformly from SO(3).
 
 The `⊗` operator (`\otimes`) can also be used for composition. That is, `a ⊗ b == compose(a, b)`.

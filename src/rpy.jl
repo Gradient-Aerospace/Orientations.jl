@@ -55,13 +55,11 @@ Base.convert(::Type{RPYDeg{T}}, rpy::RPY) where {T} = convert(RPYDeg{T}, rad2deg
 # Constructors #
 ################
 
-Base.zero(rv::RPY{T}) where {T} = zero(typeof(rv))
-Base.zero(::Type{RPY}) = zero(RPY_F64)
-Base.zero(::Type{RPY{T}}) where {T} = RPY{T}(zero(T), zero(T), zero(T))
+Base.one(::Type{RPY}) = one(RPY_F64)
+Base.one(::Type{RPY{T}}) where {T} = RPY{T}(zero(T), zero(T), zero(T))
 
-Base.zero(rv::RPYDeg{T}) where {T} = zero(typeof(rv))
-Base.zero(::Type{RPYDeg}) = zero(RPYDeg_F64)
-Base.zero(::Type{RPYDeg{T}}) where {T} = RPYDeg{T}(zero(T), zero(T), zero(T))
+Base.one(::Type{RPYDeg}) = one(RPYDeg_F64)
+Base.one(::Type{RPYDeg{T}}) where {T} = RPYDeg{T}(zero(T), zero(T), zero(T))
 
 function Random.rand(rng::AbstractRNG, ::Random.SamplerType{RPYDeg{T}}) where {T}
     return rad2deg(rand(rng, RPY{T}))
