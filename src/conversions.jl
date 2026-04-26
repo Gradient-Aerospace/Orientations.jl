@@ -187,6 +187,8 @@ end
 Base.convert(::Type{AA}, erp::ERP) = erp2aa(erp) # Type is not specified on the LHS.
 Base.convert(::Type{AA{T}}, erp::ERP{T}) where {T} = erp2aa(erp) # Types are the same.
 # Base.convert(::Type{AA{T}}, erp::ERP) = AA{T}(erp2aa(erp)) # Different types? Weird.
+Base.convert(::Type{AADeg}, erp::ERP) = rad2deg(erp2aa(erp))
+Base.convert(::Type{AADeg{T}}, erp::ERP{T}) where {T} = rad2deg(erp2aa(erp))
 
 "Returns the DirectionCosineMatrix for the given EulerRodriguesParameters."
 function erp2dcm(e::EulerRodriguesParameters{T}) where {T}
@@ -241,6 +243,8 @@ function erp2rpy(erp::EulerRodriguesParameters{T}) where {T}
 end
 Base.convert(::Type{RPY}, erp::ERP) = erp2rpy(erp) # Type is not specified on the LHS.
 Base.convert(::Type{RPY{T}}, erp::ERP{T}) where {T} = erp2rpy(erp) # Types are the same.
+Base.convert(::Type{RPYDeg}, erp::ERP) = rad2deg(erp2rpy(erp))
+Base.convert(::Type{RPYDeg{T}}, erp::ERP{T}) where {T} = rad2deg(erp2rpy(erp))
 
 ############
 # RV to... #

@@ -61,3 +61,45 @@ end
     @test isapprox(norm(b.axis), 1f0; atol = 1f-5)
 
 end
+
+@testset "AADeg AbstractOrientation operations" begin
+
+    a = AADeg(SA[1., 0., 0.], 15.)
+    b = AADeg(normalize(SA[1., 2., -1.]), 65.)
+    v = SA[5., 2., -4.]
+    f = 0.35
+    tol = 1e-7
+
+    @test convert(AADeg_F64, convert(ERP_F64, a)) isa AADeg_F64
+    @test convert(AADeg_F64, convert(ERP_F64, a)) ≈ a atol = tol
+
+    @test reframe(a, v) ≈ reframe(deg2rad(a), v)
+
+    c = compose(a, b)
+    @test c isa AADeg_F64
+    @test c ≈ compose(deg2rad(a), deg2rad(b)) atol = tol
+
+    d = difference(a, b)
+    @test d isa AADeg_F64
+    @test d ≈ difference(deg2rad(a), deg2rad(b)) atol = tol
+
+    @test distance(a) ≈ distance(deg2rad(a))
+    @test distance(a, b) ≈ distance(deg2rad(a), deg2rad(b))
+
+    i = interpolate(a, b, f)
+    @test i isa AADeg_F64
+    @test i ≈ interpolate(deg2rad(a), deg2rad(b), f) atol = tol
+
+    i_long = interpolate(a, b, f; shortest_path = false)
+    @test i_long isa AADeg_F64
+    @test i_long ≈ interpolate(convert(ERP_F64, a), convert(ERP_F64, b), f; shortest_path = false) atol = tol
+
+    a_inv = inv(a)
+    @test a_inv isa AADeg_F64
+    @test a_inv ≈ inv(deg2rad(a)) atol = tol
+
+    a32 = AADeg{Float32}(SA[1f0, 0f0, 0f0], 15f0)
+    b32 = AADeg{Float32}(SA[0f0, 1f0, 0f0], 45f0)
+    @test interpolate(a32, b32, 0.25f0) isa AADeg{Float32}
+
+end
