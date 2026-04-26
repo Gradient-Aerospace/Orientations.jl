@@ -3,7 +3,9 @@
 ############
 
 "Returns the DirectionCosineMatrix for the given AxisAngle."
-function aa2dcm(aa::AA{T}) where {T}
+function aa2dcm(aa::AA)
+    aa = normalize(aa)
+    T = eltype(aa.axis)
     s, c = sincos(aa.angle)
     r = aa.axis
     R = diagm(SVector{3, T}(c, c, c)) + (one(T) - c) .* (r * r') - s .* crs3(r)
@@ -13,8 +15,10 @@ Base.convert(::Type{DCM}, aa::AA) = aa2dcm(aa) # Type is not specified on the LH
 Base.convert(::Type{DCM{T}}, aa::AA{T}) where {T} = aa2dcm(aa) # Type is not specified on the LHS.
 
 "Returns the EulerRodriguesParameters for the given AxisAngle."
-function aa2erp(aa::AA{T}) where {T}
-    r = normalize(aa.axis)
+function aa2erp(aa::AA)
+    aa = normalize(aa)
+    T = eltype(aa.axis)
+    r = aa.axis
     s, c = sincos(aa.angle/2)
     return ERP{T}(s * r[1], s * r[2], s * r[3], c)
 end
@@ -24,7 +28,9 @@ Base.convert(::Type{ERP}, aa_deg::AADeg) = aa2erp(deg2rad(aa_deg)) # Type is not
 Base.convert(::Type{ERP{T}}, aa_deg::AADeg{T}) where {T} = aa2erp(deg2rad(aa_deg))
 
 "Returns the RotationVector for the given AxisAngle."
-function aa2rv(aa::AA{T}) where {T}
+function aa2rv(aa::AA)
+    aa = normalize(aa)
+    T = eltype(aa.axis)
     return RV{T}(aa.angle .* aa.axis)
 end
 Base.convert(::Type{RV}, aa::AA) = aa2rv(aa) # Type is not specified on the LHS.

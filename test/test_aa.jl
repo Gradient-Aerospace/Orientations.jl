@@ -41,6 +41,19 @@
     @test a.axis ≈ b.axis atol = 1e-15
     @test a.angle ≈ b.angle atol = 1e-15
 
+    # AxisAngle intentionally stores the axis as provided, but orientation operations and
+    # conversions should interpret it through a normalized axis.
+    a = AA(SA[2., 0., 0.], 0.5)
+    a_unit = AA(SA[1., 0., 0.], 0.5)
+    v = SA[0., 1., 0.]
+    @test a.axis == SA[2., 0., 0.]
+    @test normalize(a) == a_unit
+    @test reframe(a, v) ≈ reframe(a_unit, v)
+    @test aa2dcm(a) ≈ aa2dcm(a_unit)
+    @test aa2erp(a) ≈ aa2erp(a_unit)
+    @test aa2rv(a).vector ≈ aa2rv(a_unit).vector
+    @test_throws AssertionError normalize(AA(SA[0., 0., 0.], 0.5))
+
 end
 
 @testset "AADeg zero and rand" begin
@@ -59,6 +72,10 @@ end
     b = rand(rng, AADeg{Float32})
     @test b isa AADeg{Float32}
     @test isapprox(norm(b.axis), 1f0; atol = 1f-5)
+
+    aa_deg = AADeg(SA[0., 3., 0.], 90.)
+    @test aa_deg.axis == SA[0., 3., 0.]
+    @test normalize(aa_deg) == AADeg(SA[0., 1., 0.], 90.)
 
 end
 

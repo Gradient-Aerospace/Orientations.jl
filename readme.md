@@ -111,6 +111,10 @@ For `AxisAngle`, provide the axis first and then the angle:
 AA(SA[1., 0., 0.], 0.)
 ```
 
+The constructor stores the axis exactly as provided; it does not normalize the axis.
+Conversions and orientation operations that require a unit axis normalize internally, and
+`LinearAlgebra.normalize(aa)` returns an equivalent `AxisAngle` with a unit axis.
+
 For convenience, `aax`, `aay`, and `aaz` exist to create orientations rotated about a given primary axis.
 
 For `DirectionCosineMatrix`, give the matrix itself:

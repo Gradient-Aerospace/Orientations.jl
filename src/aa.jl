@@ -4,6 +4,9 @@ export aax, aay, aaz
 """
 Represents an orientation that is rotated a given angle (rad) about the given axis from a
 reference. The fields are `axis` and `angle`.
+
+The constructor stores the axis exactly as provided; it does not normalize the axis. Use
+`LinearAlgebra.normalize(aa)` to return an equivalent `AxisAngle` with a unit axis.
 """
 @kwdef struct AxisAngle{T} <: AbstractOrientation{T}
     axis::SVector{3, T}
@@ -15,6 +18,9 @@ const AA_F64 = AxisAngle{Float64}
 """
 Represents an orientation that is rotated a given angle (deg) about the given axis from a
 reference. The fields are `axis` and `angle`.
+
+The constructor stores the axis exactly as provided; it does not normalize the axis. Use
+`LinearAlgebra.normalize(aa_deg)` to return an equivalent `AxisAngleDeg` with a unit axis.
 
 This type can be converted to `AxisAngle` via the `deg2rad` function.
 """
@@ -64,12 +70,36 @@ end
 # We could swap the angle or axis. We choose the axis.
 Base.inv(aa::AA) = typeof(aa)(aa.axis, -aa.angle)
 
+"""
+Returns an equivalent AxisAngle with a unit axis.
+"""
+function LinearAlgebra.normalize(aa::AxisAngle)
+    axis_norm = norm(aa.axis)
+    @assert axis_norm > zero(axis_norm) "Cannot normalize an AxisAngle with a zero axis."
+    axis = aa.axis ./ axis_norm
+    T = promote_type(eltype(axis), typeof(aa.angle))
+    return AxisAngle{T}(convert(SVector{3, T}, axis), convert(T, aa.angle))
+end
+
+"""
+Returns an equivalent AxisAngleDeg with a unit axis.
+"""
+function LinearAlgebra.normalize(aa_deg::AxisAngleDeg)
+    axis_norm = norm(aa_deg.axis)
+    @assert axis_norm > zero(axis_norm) "Cannot normalize an AxisAngleDeg with a zero axis."
+    axis = aa_deg.axis ./ axis_norm
+    T = promote_type(eltype(axis), typeof(aa_deg.angle))
+    return AxisAngleDeg{T}(convert(SVector{3, T}, axis), convert(T, aa_deg.angle))
+end
+
 # Going to ERPs is actually the best way to do this calculation.
 compose(a::AA, b::AA) = erp2aa(compose(aa2erp(a), aa2erp(b)))
 
 # We can reframe by going to DCM, but actually it's slightly faster without
 # going to DCM.
-function reframe(aa::AA{T}, v) where {T}
+function reframe(aa::AA, v)
+    aa = normalize(aa)
+    T = eltype(aa.axis)
     s, c = sincos(aa.angle)
     r = aa.axis
     return c .* v + ((one(T) - c) * (r ⋅ v)) .* r - s .* cross(r, v)
