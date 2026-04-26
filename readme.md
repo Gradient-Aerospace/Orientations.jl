@@ -11,6 +11,8 @@ The available orientation types are:
 * `EulerRodriguesParameters` (aka `ERP`)
 * `RotationVector` (aka `RV`)
 * `RollPitchYaw` (aka `RPY`)
+* `AxisAngleDeg` (aka `AADeg`)
+* `RollPitchYawDeg` (aka `RPYDeg`)
 
 ## Basic Example
 
@@ -149,9 +151,9 @@ RPY(; roll = 0., pitch = 0., yaw = 0.)
 
 ## Human Interface Types
 
-There are a couple of types whose only purpose (in this package) is human input and output. For example, there's a type called `RPYDeg` that lets the user specify the angles in degrees. That type should be converted to `RPY` either via `convert(RPY, my_rpy_deg)` or `deg2rad(my_rpy_deg)`. The `RPY` type is what should be used by the program.
+There are a couple of types that store their angles in degrees for human input and output. For example, `RPYDeg` lets the user specify roll, pitch, and yaw in degrees, and `AADeg` does the same for axis-angle orientations.
 
-`AADeg` is the other "human interface" type.
+These types support the same `AbstractOrientation` operations as their radian counterparts, and operations that return orientations preserve the degree-valued type. They can also be converted to their radian forms via `convert(RPY, my_rpy_deg)`, `convert(AA, my_aa_deg)`, or `deg2rad`. The `distance` functions still return radians, consistent with the rest of the package.
 
 ## Where Are The Quaternions?
 

@@ -69,3 +69,45 @@ end
     @test all(isfinite, (b.roll, b.pitch, b.yaw))
 
 end
+
+@testset "RPYDeg AbstractOrientation operations" begin
+
+    a = RPYDeg(10., -20., 30.)
+    b = RPYDeg(-15., 25., 70.)
+    v = SA[5., 2., -4.]
+    f = 0.35
+    tol = 1e-7
+
+    @test convert(RPYDeg_F64, convert(ERP_F64, a)) isa RPYDeg_F64
+    @test convert(RPYDeg_F64, convert(ERP_F64, a)) ≈ a atol = tol
+
+    @test reframe(a, v) ≈ reframe(deg2rad(a), v)
+
+    c = compose(a, b)
+    @test c isa RPYDeg_F64
+    @test c ≈ compose(deg2rad(a), deg2rad(b)) atol = tol
+
+    d = difference(a, b)
+    @test d isa RPYDeg_F64
+    @test d ≈ difference(deg2rad(a), deg2rad(b)) atol = tol
+
+    @test distance(a) ≈ distance(deg2rad(a))
+    @test distance(a, b) ≈ distance(deg2rad(a), deg2rad(b))
+
+    i = interpolate(a, b, f)
+    @test i isa RPYDeg_F64
+    @test i ≈ interpolate(deg2rad(a), deg2rad(b), f) atol = tol
+
+    i_long = interpolate(a, b, f; shortest_path = false)
+    @test i_long isa RPYDeg_F64
+    @test i_long ≈ interpolate(convert(ERP_F64, a), convert(ERP_F64, b), f; shortest_path = false) atol = tol
+
+    a_inv = inv(a)
+    @test a_inv isa RPYDeg_F64
+    @test a_inv ≈ inv(deg2rad(a)) atol = tol
+
+    a32 = RPYDeg{Float32}(10f0, -20f0, 30f0)
+    b32 = RPYDeg{Float32}(-15f0, 25f0, 70f0)
+    @test interpolate(a32, b32, 0.25f0) isa RPYDeg{Float32}
+
+end
