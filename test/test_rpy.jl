@@ -50,6 +50,25 @@
 
 end
 
+@testset "RPY Float32 singularities" begin
+
+    tol = 1f-5
+    for pitch in (Float32(π/2), -Float32(π/2))
+        rpy = RPY{Float32}(0.1f0, pitch, 0.2f0)
+        from_erp = erp2rpy(rpy2erp(rpy))
+        from_dcm = dcm2rpy(rpy2dcm(rpy))
+        @test from_erp isa RPY{Float32}
+        @test from_dcm isa RPY{Float32}
+        @test from_erp.roll == 0f0
+        @test from_dcm.roll == 0f0
+        @test abs(from_erp.pitch - pitch) <= tol
+        @test abs(from_dcm.pitch - pitch) <= tol
+        @test from_erp ≈ rpy atol = tol
+        @test from_dcm ≈ rpy atol = tol
+    end
+
+end
+
 @testset "RPYDeg zero and rand" begin
 
     z = zero(RPYDeg)

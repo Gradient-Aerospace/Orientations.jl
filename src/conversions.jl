@@ -157,12 +157,13 @@ Base.convert(::Type{RV{T}}, dcm::DCM{T}) where {T} = dcm2rv(dcm) # Type is not s
 function dcm2rpy(dcm::DCM{T}) where {T}
     # Zipfel, 75
     sin_pitch = -dcm.matrix[1, 3]
-    if sin_pitch <= -one(T) + eps(one(T))
-        pitch = -π/2
+    tol = sqrt(eps(T))
+    if sin_pitch <= -one(T) + tol
+        pitch = -T(π)/2
         roll = zero(T)
         yaw = atan(-dcm.matrix[2, 1], dcm.matrix[2, 2])
-    elseif sin_pitch >= one(T) - eps(one(T))
-        pitch = π/2
+    elseif sin_pitch >= one(T) - tol
+        pitch = T(π)/2
         roll = zero(T)
         yaw = atan(-dcm.matrix[2, 1], dcm.matrix[2, 2])
     else
@@ -228,18 +229,18 @@ function erp2rpy(erp::EulerRodriguesParameters{T}) where {T}
     q1 = erp.x
     q2 = erp.y
     q3 = erp.z
-    tol = 1e-12 # TODO: Make this type-aware. This is for Float64.
+    tol = sqrt(eps(T))
     sin_pitch = 2 * (q0 * q2 - q1 * q3)
     if sin_pitch >= one(T) - tol
-        pitch = π/2
+        pitch = T(π)/2
         roll = zero(T) # Pitch is indistinguishable from yaw here.
         yaw = 2 * atan(-q1, q2) # From inspection of eq. 4.78
     elseif sin_pitch < -one(T) + tol
-        pitch = -π/2
+        pitch = -T(π)/2
         roll = zero(T) # Pitch is indistinguishable from yaw here.
         yaw = 2 * atan(-q1, q2) # From inspection of eq. 4.78
     else
-        pitch = asin(sin_pitch)
+        pitch = asin(clamp(sin_pitch, -one(T), one(T)))
         yaw = atan(2 * (q1 * q2 + q0 * q3), q0^2 + q1^2 - q2^2 - q3^2)
         roll = atan(2 * (q2 * q3 + q0 * q1), q0^2 - q1^2 - q2^2 + q3^2)
     end
