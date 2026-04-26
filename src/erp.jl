@@ -186,10 +186,18 @@ function distance(a::EulerRodriguesParameters{T}) where {T}
 end
 
 """
-    rate(erp::EulerRodriguesParameters, ω; k = 1/2)
+    rate(erp_BA::EulerRodriguesParameters, ω_BA_B, k = 1/2)
 
-Returns the rate of change of the ERP of B wrt A (`erp`) given the rotation rate of B
-wrt A (`ω`), expressed in either B or A (doesn't matter which). (Shuster eq. 306)
+Returns the rate of change of the ERP of frame B wrt frame A (`erp_BA`) given the
+rotation rate of B wrt A (`ω_BA_B`), expressed in frame B. With `k = 0` and small `dt`,
+this follows the convention:
+
+```
+normalize(erp_BA + dt * rate(erp_BA, ω_BA_B, 0)) ≈ compose(rv2erp(RV(ω_BA_B * dt)), erp_BA)
+```
+
+If the rotation rate is expressed in frame A, convert it first with
+`ω_BA_B = reframe(erp_BA, ω_BA_A)`.
 
 This function includes a correction factor (`k`) to push the norm towards unity. This is
 useful for numerical integration and should have no affect if the norm is already unity. In
