@@ -6,13 +6,28 @@ the axis of rotation between the two frames. It has a single field, `vector`.
 """
 @kwdef struct RotationVector{T} <: AbstractOrientation{T}
     vector::SVector{3, T}
+    RotationVector{T}(vector::SVector{3, T}) where {T} = new{T}(vector)
 end
 const RV = RotationVector
 const RV_F64 = RotationVector{Float64}
+RotationVector(vector::SVector{3, T}) where {T} = RotationVector{T}(vector)
 
 ################
 # Constructors #
 ################
+
+"Constructs a RotationVector from a 3-element vector."
+function RotationVector(v::AbstractVector)
+    @assert length(v) == 3 "Cannot construct RotationVector from a $(length(v))-element vector."
+    T = eltype(v)
+    return RotationVector{T}(SVector{3, T}(v))
+end
+
+"Constructs a RotationVector from a 3-element vector."
+function RotationVector{T}(v::AbstractVector) where {T}
+    @assert length(v) == 3 "Cannot construct RotationVector from a $(length(v))-element vector."
+    return RotationVector{T}(SVector{3, T}(v))
+end
 
 Base.convert(type::Type{<:RV}, v::AbstractVector) = type(v)
 

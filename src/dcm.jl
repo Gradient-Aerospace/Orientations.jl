@@ -6,13 +6,21 @@ Represents an orientation as a direction cosine matrix, with a single field call
 """
 @kwdef struct DirectionCosineMatrix{T} <: AbstractOrientation{T} # Not an AbstractMatrix!
     matrix::SMatrix{3, 3, T, 9}
+    DirectionCosineMatrix{T}(matrix::SMatrix{3, 3, T, 9}) where {T} = new{T}(matrix)
 end
 const DCM = DirectionCosineMatrix
 const DCM_F64 = DirectionCosineMatrix{Float64}
+DirectionCosineMatrix(matrix::SMatrix{3, 3, T, 9}) where {T} = DirectionCosineMatrix{T}(matrix)
 
 ################
 # Constructors #
 ################
+
+"Constructs a DirectionCosineMatrix from a 3x3 matrix."
+DirectionCosineMatrix(m::AbstractMatrix) = convert(DirectionCosineMatrix, m)
+
+"Constructs a DirectionCosineMatrix from a 3x3 matrix."
+DirectionCosineMatrix{T}(m::AbstractMatrix) where {T} = convert(DirectionCosineMatrix{T}, m)
 
 """
 Creates a direction cosine matrix such that if frame B is rotated θ about x from frame A,
@@ -86,15 +94,27 @@ Base.zero(::Type{DCM}) = zero(DCM_F64)
 Base.zero(::Type{DCM{T}}) where {T} = DCM(one(SMatrix{3, 3, T, 9})) # <- A bit ironic...
 
 "Converts a matrix to a DirectionCosineMatrix."
-function Base.convert(type::Type{<:DCM}, m::AbstractMatrix)
+function Base.convert(::Type{DCM}, m::AbstractMatrix)
     @assert size(m) == (3,3) "Cannot convert a $(size(m)) matrix to a DirectionCosineMatrix."
-    return type(convert(SMatrix, m))
+    return DCM(SMatrix{3, 3}(m))
+end
+
+"Converts a matrix to a DirectionCosineMatrix."
+function Base.convert(::Type{DCM{T}}, m::AbstractMatrix) where {T}
+    @assert size(m) == (3,3) "Cannot convert a $(size(m)) matrix to a DirectionCosineMatrix."
+    return DCM{T}(SMatrix{3, 3, T, 9}(m))
 end
 
 "Converts a StaticMatrix to a DirectionCosineMatrix."
-function Base.convert(type::Type{<:DCM}, m::SMatrix)
+function Base.convert(::Type{DCM}, m::SMatrix)
     @assert size(m) == (3,3) "Cannot convert a $(size(m)) matrix to a DirectionCosineMatrix."
-    return type(m)
+    return DCM(SMatrix{3, 3}(m))
+end
+
+"Converts a StaticMatrix to a DirectionCosineMatrix."
+function Base.convert(::Type{DCM{T}}, m::SMatrix) where {T}
+    @assert size(m) == (3,3) "Cannot convert a $(size(m)) matrix to a DirectionCosineMatrix."
+    return DCM{T}(SMatrix{3, 3, T, 9}(m))
 end
 
 ##############
