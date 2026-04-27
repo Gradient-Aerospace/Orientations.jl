@@ -71,13 +71,6 @@ include("test_rpy.jl")
                     @test interpolate(aa, ref_aa, f) ≈ erp_expected atol = erp_tol
                     @test interpolate(dcm, ref_dcm, f) ≈ erp_expected atol = erp_tol
                     @test interpolate(rpy, ref_rpy, f) ≈ erp_expected atol = erp_tol
-                    if !isapprox(interpolate(rpy, ref_rpy, f), erp_expected; atol = erp_tol)
-                        @show rpy
-                        @show ref_rpy
-                        @show erp
-                        @show ref_erp
-                        @show f
-                    end
                     @test interpolate(rv, ref_rv, f) ≈ erp_expected atol = erp_tol
                 end
 
@@ -87,11 +80,11 @@ include("test_rpy.jl")
                 @test inv(rpy) ≈ erp_expected atol = erp_tol
                 @test inv(rv) ≈ erp_expected atol = erp_tol
 
-                eltype(aa) == Float64
-                eltype(dcm) == Float64
-                eltype(erp) == Float64
-                eltype(rpy) == Float64
-                eltype(rv) == Float64
+                @test aa isa AA_F64
+                @test dcm isa DCM_F64
+                @test erp isa ERP_F64
+                @test rpy isa RPY_F64
+                @test rv isa RV_F64
 
             end
         end
@@ -131,10 +124,20 @@ end
     @test one(DCM_F64) == DCM(SMatrix{3, 3, Float64, 9}(I))
     @test one(RPY_F64) == RPY(0., 0., 0.)
     @test one(RV_F64) == RV(SA[0., 0., 0.])
+    @test one(ERP) == one(ERP_F64)
+    @test one(AA) == one(AA_F64)
+    @test one(AADeg) == one(AADeg_F64)
+    @test one(DCM) == one(DCM_F64)
+    @test one(RPY) == one(RPY_F64)
+    @test one(RPYDeg) == one(RPYDeg_F64)
+    @test one(RV) == one(RV_F64)
     @test identity_orientation(ERP_F64) == one(ERP_F64)
     @test identity_orientation(erpx(0.2)) == one(ERP_F64)
     @test_throws MethodError zero(ERP_F64)
+    @test_throws MethodError zero(AA_F64)
     @test_throws MethodError zero(DCM_F64)
+    @test_throws MethodError zero(RPY_F64)
+    @test_throws MethodError zero(RV_F64)
 
 end
 
