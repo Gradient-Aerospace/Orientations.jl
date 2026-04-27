@@ -6,9 +6,7 @@
     erp1 = aa2erp(AxisAngle(r, theta1))
     erp2 = aa2erp(AxisAngle(r, theta2))
     erpf = erp2 ⊗ erp1
-    @show rf, thetaf = erp2aa(erpf)
-    @show rf
-    @show thetaf
+    rf, thetaf = erp2aa(erpf)
     @test norm(rf .- r) < 1e-10
     @test thetaf ≈ theta1 + theta2 atol=1e-8
 
@@ -206,8 +204,7 @@ end
 
     ep = ERP(0., 0., 0., 1.)
 
-    # "Test" the `show` method.
-    @show ep
+    @test sprint(show, ep) == "EulerRodriguesParameters(x = 0.0, y = 0.0, z = 0.0, s = 1.0)"
 
     @test length(ep) == 4
 

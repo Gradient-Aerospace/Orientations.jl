@@ -1,18 +1,33 @@
 # GradientOrientations.jl
 
-*NOTE*: This is a sandbox for now. If we like this package, we should release it as open source under Orientations.jl.
-
 This package is useful for specifying the orientation of a thing relative to another thing and for operating on those orientations.
 
 The available orientation types are:
 
-* `AxisAngle` (aka `AA`)
-* `DirectionCosineMatrix` (aka `DCM`)
-* `EulerRodriguesParameters` (aka `ERP`)
-* `RotationVector` (aka `RV`)
-* `RollPitchYaw` (aka `RPY`)
-* `AxisAngleDeg` (aka `AADeg`)
-* `RollPitchYawDeg` (aka `RPYDeg`)
+* `AxisAngle` (aka `AA`, `AA_F64`)
+* `DirectionCosineMatrix` (aka `DCM`, `DCM_F64`)
+* `EulerRodriguesParameters` (aka `ERP`, `ERP_F64`)
+* `RotationVector` (aka `RV`, `RV_F64`)
+* `RollPitchYaw` (aka `RPY`, `RPY_F64`)
+* `AxisAngleDeg` (aka `AADeg`, `AADeg_F64`)
+* `RollPitchYawDeg` (aka `RPYDeg`, `RPYDef_F64`)
+
+## Installation
+
+```julia
+using Pkg
+Pkg.add("GradientOrientations")
+```
+
+## Conventions
+
+GradientOrientations uses passive frame orientations. If `b_wrt_a = erpx(θ)`, then
+frame B is rotated by `θ` about x from frame A. If `v_a` is a vector expressed in frame A,
+then `reframe(b_wrt_a, v_a)` returns the same vector expressed in frame B.
+
+This is intentionally different from active-rotation APIs such as Rotations.jl, where
+`RotX(θ) * v` actively rotates the vector. See "Exporting to Rotations.jl" below for the
+sign and ordering conversion.
 
 ## Basic Example
 
@@ -87,7 +102,7 @@ rpy_b_wrt_a = erp2rpy(erp_b_wrt_a)
 * `distance`: Returns the rotation angle of the orientation, the "smallest way around", in radians.
 * `interpolate(o1, o2, f)`: Interpolates (spherically) from orientation 1 to orientation 2 (both wrt the same reference) using `f` in the inclusive range [0, 1].
 * `Base.inv(b_wrt_a)`: Inverts the orientation, returning A wrt B.
-* `Base.one(type)` / `identity_orientation(type)`: Returns an orientation of the given type with zero rotation from the reference.
+* `Base.one(type)` / `identity_orientation(type)`: Returns an identity orientation of the given type (no rotation from the reference).
 * `Random.rand(rng, type)`: Returns a random orientation of the given type (any of the available orientation types) drawn uniformly from SO(3).
 
 The `⊗` operator (`\otimes`) can also be used for composition. That is, `a ⊗ b == compose(a, b)`.
@@ -135,13 +150,15 @@ DCM([
 ])
 ```
 
-For convenience, `Rx`, `Ry`, and `Rz` exist to create DCMs rotated about a given primary axis.
+For convenience, the `Rx`, `Ry`, and `Rz` functions exist to create DCMs rotated about a given primary axis.
 
 For `EulerRodriguesParameters`, give each element. The scalar is last. The following corresponds to "no rotation":
 
 ```julia
 ERP(0., 0., 0., 1.)
 ERP(; x = 0., y = 0., z = 0., s = 1.)
+one(ERP_F64)
+identity_orientation(ERP_F64)
 ```
 
 Similarly, `erpx`, `erpy`, and `erpz` all exist.
@@ -159,6 +176,20 @@ For `RollPitchYaw`, provide roll, pitch, and yaw:
 RPY(0., 0., 0.)
 RPY(; roll = 0., pitch = 0., yaw = 0.)
 ```
+
+## Validity and Normalization
+
+The concrete constructors are lightweight storage constructors. They do not normalize,
+project, or validate their inputs. In particular:
+
+* `ERP(...)` does not normalize its four elements.
+* `AA(...)` and `AADeg(...)` store the axis exactly as supplied.
+* `DCM(...)` stores the matrix exactly as supplied and does not project it onto SO(3).
+
+Use `one(type)` or `identity_orientation(type)` for an identity orientation, and use
+`LinearAlgebra.normalize` for `ERP`, `AA`, and `AADeg` when you need to normalize stored
+values explicitly. Orientation operations assume their inputs represent rotations unless
+documented otherwise.
 
 ## Human Interface Types
 

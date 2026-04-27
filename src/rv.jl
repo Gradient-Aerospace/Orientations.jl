@@ -61,7 +61,7 @@ interpolate(a::RV, b::RV, f) = erp2rv(interpolate(rv2erp(a), rv2erp(b), f))
 # Iteration #
 #############
 
-# TODO?
+# TODO? Do we want to be able to splat the elements of an RV?
 
 #################
 # Miscellaneous #
