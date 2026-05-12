@@ -1,5 +1,5 @@
 "A package for representing and operating on orientation-related types."
-module GradientOrientations
+module Orientations
 
 using LinearAlgebra
 using Random
@@ -172,4 +172,4 @@ end
 # Allow a user to compose multiple orientations.
 compose(a, b, c, args...) = compose(compose(a, b), c, args...)
 
-end # module GradientOrientations
+end # module Orientations

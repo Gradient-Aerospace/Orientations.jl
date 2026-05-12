@@ -1,5 +1,5 @@
 [deps]
-GradientOrientations = "8b457350-7060-4fc5-94ff-7a3d96bb78d0"
+Orientations = "8b457350-7060-4fc5-94ff-7a3d96bb78d0"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"

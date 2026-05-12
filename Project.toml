@@ -1,6 +1,6 @@
-name = "GradientOrientations"
+name = "Orientations"
 uuid = "8b457350-7060-4fc5-94ff-7a3d96bb78d0"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Tucker McClure <tucker@gradient.team>"]
 
 [workspace]

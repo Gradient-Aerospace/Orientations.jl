@@ -1,4 +1,4 @@
-# GradientOrientations.jl
+# Orientations.jl
 
 This package is useful for specifying the orientation of a thing relative to another thing and for operating on those orientations.
 
@@ -16,12 +16,12 @@ The available orientation types are:
 
 ```julia
 using Pkg
-Pkg.add("GradientOrientations")
+Pkg.add("Orientations")
 ```
 
 ## Conventions
 
-GradientOrientations uses passive frame orientations. If `b_wrt_a = erpx(θ)`, then
+Orientations uses passive frame orientations. If `b_wrt_a = erpx(θ)`, then
 frame B is rotated by `θ` about x from frame A. If `v_a` is a vector expressed in frame A,
 then `reframe(b_wrt_a, v_a)` returns the same vector expressed in frame B.
 
@@ -34,7 +34,7 @@ sign and ordering conversion.
 Suppose that frame B is rotated 45 degrees from frame A about the (common) `x` axis. Here's how we specify that, using the AxisAngle orientation type as an example:
 
 ```julia
-using GradientOrientations
+using Orientations
 using StaticArrays # For the static vector type
 aa_b_wrt_a = AxisAngle(SA[1., 0., 0.], deg2rad(45))
 ```
@@ -206,7 +206,7 @@ The reader may notice that there is no "quaternion" type. This is just nomenclat
 Eigen is a C++ library for linear algebra, and it features a Quaternion type. The following two snippets give the same results:
 
 ```julia
-using GradientOrientations
+using Orientations
 using StaticArrays
 erp_b_wrt_a = ERP(x = -0.39015349272073274, y = 0.44885619975114965, z = -0.5331968363460537, s = 0.6016722511245876)
 v_a = SA[ -0.09342155668355605, -0.5691321723949833, 0.18864021876469472]
@@ -265,12 +265,12 @@ end
 
 ### Exporting to Rotations.jl
 
-Rotations.jl is an excellent package that implements *active rotations*. When constructing its rotations, you say, "This *does something* to a vector." That is, `RotX(pi/4) * v` rotates `v` by `pi/4` radians about the x axis. This is exactly the opposite of GradientOrientations, where `erp_BA = erpx(pi/4)` says, "frame B is rotated pi/4 radians from frame A", and if `v_A` is a vector expressed in frame A, then `v_B = reframe(erp_BA, v_A)` is that same vector expressed in frame B.
+Rotations.jl is an excellent package that implements *active rotations*. When constructing its rotations, you say, "This *does something* to a vector." That is, `RotX(pi/4) * v` rotates `v` by `pi/4` radians about the x axis. This is exactly the opposite of Orientations, where `erp_BA = erpx(pi/4)` says, "frame B is rotated pi/4 radians from frame A", and if `v_A` is a vector expressed in frame A, then `v_B = reframe(erp_BA, v_A)` is that same vector expressed in frame B.
 
 The following give the same results:
 
 ```julia
-using GradientOrientations
+using Orientations
 using StaticArrays
 erp_b_wrt_a = ERP(x = -0.39015349272073274, y = 0.44885619975114965, z = -0.5331968363460537, s = 0.6016722511245876)
 v_a = SA[ -0.09342155668355605, -0.5691321723949833, 0.18864021876469472]
@@ -291,7 +291,7 @@ v_b = q_a_to_b * v_a
 
 This gives `SA[0.5384388474664465, -0.27833775489103457, -0.02891108412057084]`, the same as the above.
 
-Extending the examples for composition (quaternion multiplication in Rotations.jl), here's GradientOrientations.jl:
+Extending the examples for composition (quaternion multiplication in Rotations.jl), here's Orientations.jl:
 
 ```julia
 erp_c_wrt_b = ERP(x = -0.26328146006533937, y = 0.3194557972432347, z = -0.547884663730034, s = 0.7269479084796793)
