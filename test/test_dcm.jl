@@ -1,4 +1,4 @@
-using GradientOrientations
+using Orientations
 using Test
 using StaticArrays
 using LinearAlgebra

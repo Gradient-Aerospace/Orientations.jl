@@ -1,11 +1,9 @@
 using Test
 using Random
-using GradientOrientations
-using GradientOrientations: AbstractOrientation
+using Orientations
+using Orientations: AbstractOrientation, crs3
 using LinearAlgebra
 using StaticArrays
-
-import GradientOrientations: crs3
 
 include("test_aa.jl")
 include("test_dcm.jl")
