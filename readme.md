@@ -21,13 +21,9 @@ Pkg.add("Orientations")
 
 ## Conventions
 
-Orientations uses passive frame orientations. If `b_wrt_a = erpx(θ)`, then
-frame B is rotated by `θ` about x from frame A. If `v_a` is a vector expressed in frame A,
-then `reframe(b_wrt_a, v_a)` returns the same vector expressed in frame B.
+Orientations uses passive frame orientations. If `b_wrt_a = erpx(θ)`, then frame B is rotated by `θ` about x from frame A. If `v_a` is a vector expressed in frame A, then `reframe(b_wrt_a, v_a)` returns the same vector expressed in frame B.
 
-This is intentionally different from active-rotation APIs such as Rotations.jl, where
-`RotX(θ) * v` actively rotates the vector. See "Exporting to Rotations.jl" below for the
-sign and ordering conversion.
+This is intentionally different from active-rotation APIs such as Rotations.jl, where `RotX(θ) * v` actively rotates the vector. See "Exporting to Rotations.jl" below for the sign and ordering conversion.
 
 ## Basic Example
 
@@ -78,7 +74,7 @@ Those `convert` methods actually call the underlying functions for conversion.
 ```julia
 dcm_b_wrt_a = aa2dcm(aa_b_wrt_a)
 erp_b_wrt_a = aa2erp(aa_b_wrt_a)
-rv_b_wrt_a = aa2rv(aa_b_wrt_a)
+rv_b_wrt_a  = aa2rv(aa_b_wrt_a)
 rpy_b_wrt_a = aa2rpy(aa_b_wrt_a)
 ```
 
@@ -105,7 +101,7 @@ rpy_b_wrt_a = erp2rpy(erp_b_wrt_a)
 * `Base.one(type)` / `identity_orientation(type)`: Returns an identity orientation of the given type (no rotation from the reference).
 * `Random.rand(rng, type)`: Returns a random orientation of the given type (any of the available orientation types) drawn uniformly from SO(3).
 
-The `⊗` operator (`\otimes`) can also be used for composition. That is, `a ⊗ b == compose(a, b)`.
+The `⊗` operator (`\otimes`) can also be used for composition. That is, `a ⊗ b == compose(a, b)`. Note that multiplication, `*`, is not used to compose orientations, with the exception of `DirectionCosineMatrix` which supports `*` in addition to `compose`.
 
 For `EulerRodriguesParameters`:
 
@@ -199,7 +195,7 @@ These types support the same `AbstractOrientation` operations as their radian co
 
 ## Where Are The Quaternions?
 
-The reader may notice that there is no "quaternion" type. This is just nomenclature. The word "quaternion" is used with so many different conventions that any time the word "quaternion" appears on an interface between two systems, a healthy discussion (and usually several examples) are necessary to describe what is actually meant. This package chooses to bypass that nomenclatural minefield. Instead, this package uses "Euler-Rodrigues Parameters", which is unambiguously described by Shuster in "A Survey of Attitude Representations", freely available [here](https://www.malcolmdshuster.com/Doorway_Pubs-1970-1998.htm). This type, which he also calls "the quaternion of rotation" (JPL conventions), has consistent rules and conversions to the other types implemented here. More to the point, this type has all of the advantages of (in fact, *is*) a quaternion of rotation (a minimal representation of SO(3), numerical stability, good behavior under numerical integration, good conversion to and from other types) without the confusion surrounding the conventions (scalar first or last? is vector or frame rotation implied? what are the rules of composition, and is that the same thing as quaternion multiplication? if you right-multiply a vector, is that the same as right-multiplying the same vector with a DCM obtained from the conversion of the quaternion to a DCM?).
+The reader may notice that there is no "quaternion" type. This is just nomenclature. The word "quaternion" is used with so many different conventions that any time the word "quaternion" appears on an interface between two systems, a healthy discussion and usually several examples are necessary to describe what is actually meant. This package chooses to bypass that nomenclatural minefield. Instead, this package uses "Euler-Rodrigues Parameters", `EulerRodriguesParameters` or `ERP`, which is unambiguously described by Shuster in "A Survey of Attitude Representations", freely available [here](https://www.malcolmdshuster.com/Doorway_Pubs-1970-1998.htm). This type, which he also calls "the quaternion of rotation" (JPL conventions), has consistent rules and conversions to the other types implemented here. More to the point, this type has all of the advantages of (in fact, *is*) a quaternion of rotation (a minimal representation of SO(3), numerical stability, good behavior under numerical integration, good conversion to and from other types) without the confusion surrounding the conventions (scalar first or last? is vector or frame rotation implied? what are the rules of composition, and is that the same thing as quaternion multiplication? if you right-multiply a vector, is that the same as right-multiplying the same vector with a DCM obtained from the conversion of the quaternion to a DCM?).
 
 ### Exporting to Eigen
 
