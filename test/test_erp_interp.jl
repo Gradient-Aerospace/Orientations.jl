@@ -93,6 +93,23 @@
         result = interpolate(ep_start, ep_end, 0.5, shortest_path = false)
         @test distance(result, ep_start) ≈ 3π/4
 
+        # If the supplied ERP signs describe the short arc, then `shortest_path = false`
+        # should preserve that path rather than force a long detour.
+        ax = normalize(SA[1., -2., 3.])
+        a = aa2erp(AxisAngle(ax, pi/8))
+        b = aa2erp(AxisAngle(ax, -pi/8))
+        c_short = erp2aa(interpolate(a, b, 0.25))
+        c_preserved = erp2aa(interpolate(a, b, 0.25; shortest_path = false))
+        @test norm(c_short.axis - ax) < 1e-12
+        @test norm(c_preserved.axis - ax) < 1e-12
+        @test c_short.angle ≈ pi/8 - 0.25 * pi/4
+        @test c_preserved.angle ≈ c_short.angle
+
+        # Passing the other ERP for the same endpoint encodes the long arc.
+        c_long = erp2aa(interpolate(a, other(b), 0.25; shortest_path = false))
+        @test norm(c_long.axis - ax) < 1e-12
+        @test c_long.angle ≈ ((2*pi - pi/8) - pi/8) * 0.25 + pi/8
+
     end
 
     @testset "Interpolation with opposite quaternions" begin
