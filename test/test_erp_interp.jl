@@ -110,6 +110,33 @@
         @test norm(c_long.axis - ax) < 1e-12
         @test c_long.angle ≈ ((2*pi - pi/8) - pi/8) * 0.25 + pi/8
 
+        # Test again for different angles. The shortest path here is pi/4 from a to b.
+        ax = normalize(SA[-3., -2., 1.])
+        a = aa2erp(AxisAngle(ax, 7/8*pi))
+        b = aa2erp(AxisAngle(ax, 9/8*pi))
+        c_short = erp2aa(interpolate(a, b, 0.75))
+        c_preserved = erp2aa(interpolate(a, b, 0.75; shortest_path = false))
+        if c_short.axis ⋅ ax < 0.
+            c_short = other(c_short)
+        end
+        if c_preserved.axis ⋅ ax < 0.
+            c_preserved = other(c_preserved)
+        end
+        @test norm(c_short.axis - ax) < 1e-12
+        @test norm(c_preserved.axis - ax) < 1e-12
+        @test c_short.angle ≈ 7/8*pi + 0.75 * pi/4
+        @test c_preserved.angle ≈ c_short.angle
+
+        # Passing the other ERP for the same endpoint encodes the long arc. The long way
+        # around is a rotation of -7/4*pi from a to b.
+        c_long = erp2aa(interpolate(a, other(b), 0.75; shortest_path = false))
+        if c_long.axis ⋅ ax < 0.
+            c_long = other(c_long)
+        end
+        @show dot(other(a), b)
+        @test norm(c_long.axis - ax) < 1e-12
+        @test c_long.angle ≈ -7/4*pi * 0.75 + 7/8*pi
+
     end
 
     @testset "Interpolation with opposite quaternions" begin
