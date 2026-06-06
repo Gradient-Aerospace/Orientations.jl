@@ -82,6 +82,16 @@
         angle_far = distance(result_far, ep_start)
         @test angle_close ≈ angle_far
 
+        # For shortest-path interpolation, the ERP sign ambiguity should not change the
+        # physical interpolated orientation.
+        a = normalize(ERP(0.2, -0.4, 0.1, 0.88))
+        d = aa2erp(AxisAngle(normalize(SA[0.3, 0.5, -0.2]), 0.7))
+        b = compose(d, a)
+        expected = interpolate(a, b, 0.35)
+        @test interpolate(other(a), b, 0.35) ≈ expected
+        @test interpolate(a, other(b), 0.35) ≈ expected
+        @test interpolate(other(a), other(b), 0.35) ≈ expected
+
     end
 
     @testset "Long way around behavior" begin
@@ -133,9 +143,33 @@
         if c_long.axis ⋅ ax < 0.
             c_long = other(c_long)
         end
-        @show dot(other(a), b)
         @test norm(c_long.axis - ax) < 1e-12
         @test c_long.angle ≈ -7/4*pi * 0.75 + 7/8*pi
+
+        # The long arc can be encoded by flipping the start ERP instead of the end ERP.
+        ax = normalize(SA[2., -1., 4.])
+        a = aa2erp(AxisAngle(ax, pi/3))
+        b = aa2erp(AxisAngle(ax, pi/2))
+        c_long = erp2aa(interpolate(other(a), b, 0.4; shortest_path = false))
+        if c_long.axis ⋅ ax < 0.
+            c_long = other(c_long)
+        end
+        @test norm(c_long.axis - ax) < 1e-12
+        @test c_long.angle ≈ 7pi/3 + 0.4 * (pi/2 - 7pi/3)
+
+        # The same sign-preserving behavior should work for Float32 inputs.
+        ax32 = normalize(SA[1f0, 2f0, -3f0])
+        a32 = aa2erp(AxisAngle(ax32, Float32(pi/6)))
+        b32 = other(aa2erp(AxisAngle(ax32, Float32(-pi/3))))
+        r32 = interpolate(a32, b32, 0.5f0; shortest_path = false)
+        c32 = erp2aa(r32)
+        if c32.axis ⋅ ax32 < 0f0
+            c32 = other(c32)
+        end
+        @test r32 isa ERP{Float32}
+        @test norm(r32) ≈ 1f0
+        @test norm(c32.axis - ax32) < 1f-5
+        @test c32.angle ≈ Float32(11pi/12) atol = 1f-6
 
     end
 

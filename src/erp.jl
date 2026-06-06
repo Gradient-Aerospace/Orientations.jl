@@ -280,8 +280,7 @@ function interpolate(
 
     # For very small angles from start to end, we skip the trig (and hence avoid dividing
     # by 0).
-    tol = sqrt(eps(float(T)))
-    if θ <= tol
+    if θ <= sqrt(eps(float(T)))
         return normalize((1 - f) * ep_startp + f * ep_end)
     end
 
