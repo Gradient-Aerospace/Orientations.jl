@@ -120,7 +120,9 @@ Spherical linear interpolation between two orientations.
 The parameter `f` can range from 0 to 1 to specify where along the sphere to interpolate.
 When f = 0, the result is `a` and when f = 1, the result is `b`.
 
-Setting `shortest_path` to false will allow the interpolation to take the "long way around".
+Setting `shortest_path` to false preserves the path encoded by the signs of the supplied
+Euler parameters. This can take the "long way around" when the supplied parameters are on
+the long arc; use `other(a)` or `other(b)` to request that path explicitly.
 
 References
 - https://en.wikipedia.org/wiki/Slerp
