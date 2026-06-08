@@ -1,6 +1,6 @@
 # Orientations.jl Change Log
 
-## Unreleased
+## v1.0.1
 
 * Fixed ERP interpolation when `shortest_path = false`.
 
