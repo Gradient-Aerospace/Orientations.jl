@@ -1,4 +1,5 @@
-export RollPitchYaw, RPY, RPY_F64, RPYDeg, RPYDeg_F64
+export RollPitchYaw, RPY, RPY_F64
+export RollPitchYawDeg, RPYDeg, RPYDeg_F64
 
 """
 Represents an orientation as a roll, pitch, and yaw (rad) from a reference. Yaw is the first
