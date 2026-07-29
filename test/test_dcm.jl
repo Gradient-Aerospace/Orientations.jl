@@ -58,13 +58,10 @@ end
     @test length(dcm) == 9
     @test size(dcm) == (9,)
     @test axes(dcm) == (Base.OneTo(9),)
-    @test axes(dcm, 1) == Base.OneTo(9)
-    @test keys(dcm) == Base.OneTo(9)
-    @test eachindex(dcm) == Base.OneTo(9)
     @test firstindex(dcm) == 1
     @test lastindex(dcm) == 9
     @test collect(dcm) == matrix[:]
-    for k in eachindex(dcm)
+    for k in 1:length(dcm)
         @test dcm[k] == matrix[k]
     end
 
@@ -75,7 +72,6 @@ end
     @test dcm[1:2, 3] == matrix[1:2, 3]
     @test dcm[SA[1, 5, 9]] == matrix[SA[1, 5, 9]]
 
-    @test_throws BoundsError axes(dcm, 2)
     @test_throws BoundsError dcm[0]
     @test_throws BoundsError dcm[4, 1]
 

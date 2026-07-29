@@ -130,14 +130,6 @@ interpolate(a::DCM, b::DCM, f) = erp2dcm(interpolate(dcm2erp(a), dcm2erp(b), f))
 # Indexing
 @inline Base.length(::DCM) = 9
 @inline Base.size(::DCM) = (9,)
-@inline Base.axes(::DCM) = (Base.OneTo(9),)
-function Base.axes(dcm::DCM, k)
-    if k != 1
-        throw(BoundsError(dcm, k))
-    end
-    return Base.OneTo(9)
-end
-@inline Base.keys(::DCM) = Base.OneTo(9)
 @inline Base.firstindex(::DCM) = 1
 @inline Base.lastindex(::DCM) = 9
 @inline Base.getindex(dcm::DCM, args...) = getindex(dcm.matrix, args...)

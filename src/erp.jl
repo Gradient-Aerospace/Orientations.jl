@@ -298,14 +298,6 @@ end
 Base.length(::EulerRodriguesParameters) = 4
 Base.eltype(::EulerRodriguesParameters{T}) where {T} = T
 Base.size(::EulerRodriguesParameters) = (4,)
-@inline Base.axes(::EulerRodriguesParameters) = (Base.OneTo(4),)
-function Base.axes(erp::EulerRodriguesParameters, k)
-    if k != 1
-        throw(BoundsError(erp, k))
-    end
-    return Base.OneTo(4)
-end
-Base.keys(::EulerRodriguesParameters) = Base.OneTo(4)
 Base.firstindex(::EulerRodriguesParameters) = 1
 Base.lastindex(::EulerRodriguesParameters) = 4
 

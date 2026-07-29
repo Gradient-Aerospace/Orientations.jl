@@ -68,6 +68,10 @@ using Dimensions: Dimensions, dimstyle, numdims, getdim, eachdim
     @test getdim(rpy_deg, 2) == 2.
     @test getdim(rpy_deg, 3) == 3.
 
+    @test_throws BoundsError getdim(dcm, 10)
+    @test_throws BoundsError getdim(erp, 5)
+    @test_throws BoundsError getdim(rv, 4)
+
     # Real-vector dimension styles use the orientation itself as the dimension iterator.
     @test collect(eachdim(dcm)) == collect(dcm)
     @test collect(eachdim(erp)) == collect(erp)

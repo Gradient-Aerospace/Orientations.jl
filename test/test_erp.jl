@@ -234,19 +234,15 @@ end
     @test length(erp) == 4
     @test size(erp) == (4,)
     @test axes(erp) == (Base.OneTo(4),)
-    @test axes(erp, 1) == Base.OneTo(4)
-    @test keys(erp) == Base.OneTo(4)
-    @test eachindex(erp) == Base.OneTo(4)
     @test firstindex(erp) == 1
     @test lastindex(erp) == 4
 
     # Indices follow the documented x, y, z, scalar field order.
     @test collect(erp) == values
-    for k in eachindex(erp)
+    for k in 1:length(erp)
         @test erp[k] == values[k]
     end
 
-    @test_throws BoundsError axes(erp, 2)
     @test_throws BoundsError erp[0]
     @test_throws BoundsError erp[5]
     @test_throws ErrorException setindex!(erp, 1., 1)

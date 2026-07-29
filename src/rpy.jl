@@ -81,14 +81,6 @@ const RollPitchYawTypes = Union{RollPitchYaw, RollPitchYawDeg}
 
 Base.length(::RollPitchYawTypes) = 3
 Base.size(::RollPitchYawTypes) = (3,)
-Base.axes(::RollPitchYawTypes) = (Base.OneTo(3),)
-function Base.axes(rpy::RollPitchYawTypes, k)
-    if k != 1
-        throw(BoundsError(rpy, k))
-    end
-    return Base.OneTo(3)
-end
-Base.keys(::RollPitchYawTypes) = Base.OneTo(3)
 Base.firstindex(::RollPitchYawTypes) = 1
 Base.lastindex(::RollPitchYawTypes) = 3
 

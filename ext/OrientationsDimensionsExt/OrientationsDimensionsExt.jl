@@ -33,4 +33,12 @@ Dimensions.dimstyle(::Type{<:EulerRodriguesParameters}) = RealVectorDimensionSty
 Dimensions.dimstyle(::Type{<:RotationVector}) = RealVectorDimensionStyle()
 Dimensions.dimstyle(::Type{<:DirectionCosineMatrix}) = RealVectorDimensionStyle()
 
+# RealVectorDimensionStyle normally uses `axes(x, 1)` to support vectors with non-traditional
+# indices. These orientation types use traditional one-based indexing but aren't
+# AbstractArrays, so access their dimensions directly rather than adding `axes` methods just
+# for Dimensions.
+Dimensions.getdim(erp::EulerRodriguesParameters, d) = getindex(erp, d)
+Dimensions.getdim(rv::RotationVector, d) = getindex(rv, d)
+Dimensions.getdim(dcm::DirectionCosineMatrix, d) = getindex(dcm, d)
+
 end

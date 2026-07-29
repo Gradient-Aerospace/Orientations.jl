@@ -60,18 +60,14 @@ end
         @test length(rpy) == 3
         @test size(rpy) == (3,)
         @test axes(rpy) == (Base.OneTo(3),)
-        @test axes(rpy, 1) == Base.OneTo(3)
-        @test keys(rpy) == Base.OneTo(3)
-        @test eachindex(rpy) == Base.OneTo(3)
         @test firstindex(rpy) == 1
         @test lastindex(rpy) == 3
 
         @test collect(rpy) == values
-        for k in eachindex(rpy)
+        for k in 1:length(rpy)
             @test rpy[k] == values[k]
         end
 
-        @test_throws BoundsError axes(rpy, 2)
         @test_throws BoundsError rpy[0]
         @test_throws BoundsError rpy[4]
         @test_throws ErrorException setindex!(rpy, 1., 1)

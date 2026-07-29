@@ -172,14 +172,6 @@ Base.length(::AxisAngleTypes) = 2
 Base.eltype(::Union{AxisAngle{T}, AxisAngleDeg{T}}) where {T} =
     Union{T, SVector{3, T}}
 Base.size(::AxisAngleTypes) = (2,)
-Base.axes(::AxisAngleTypes) = (Base.OneTo(2),)
-function Base.axes(aa::AxisAngleTypes, k)
-    if k != 1
-        throw(BoundsError(aa, k))
-    end
-    return Base.OneTo(2)
-end
-Base.keys(::AxisAngleTypes) = Base.OneTo(2)
 Base.firstindex(::AxisAngleTypes) = 1
 Base.lastindex(::AxisAngleTypes) = 2
 
