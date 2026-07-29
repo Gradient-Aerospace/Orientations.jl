@@ -57,6 +57,20 @@ end
 
 interpolate(a::RV, b::RV, f) = erp2rv(interpolate(rv2erp(a), rv2erp(b), f))
 
+############
+# Indexing #
+############
+
+Base.axes(::RotationVector) = (Base.OneTo(3),)
+function Base.axes(rv::RotationVector, k)
+    if k != 1
+        throw(BoundsError(rv, k))
+    end
+    return Base.OneTo(3)
+end
+Base.getindex(rv::RotationVector, whatever) = getindex(rv.vector, whatever)
+Base.length(::RotationVector) = 3
+
 #############
 # Iteration #
 #############

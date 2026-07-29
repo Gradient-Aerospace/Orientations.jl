@@ -299,6 +299,13 @@ end
 Base.length(::EulerRodriguesParameters) = 4
 Base.eltype(::EulerRodriguesParameters{T}) where {T} = T
 Base.size(::EulerRodriguesParameters) = (4,)
+@inline Base.axes(::EulerRodriguesParameters) = (Base.OneTo(4),)
+function Base.axes(erp::EulerRodriguesParameters, k)
+    if k != 1
+        throw(BoundsError(erp, k))
+    end
+    return Base.OneTo(4)
+end
 
 # Allow a user to iterate over the elements of ERP, e.g. for splatting.
 function Base.iterate(erp::EulerRodriguesParameters, state = 1)
