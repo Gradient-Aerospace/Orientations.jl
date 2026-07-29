@@ -3,7 +3,7 @@ module TestDimensionsExt
 using Test
 using StaticArrays
 using Orientations
-using Dimensions: Dimensions, dimstyle, numdims, getdim
+using Dimensions: Dimensions, dimstyle, numdims, getdim, eachdim
 
 @testset "numdims for all types" begin
 
@@ -67,6 +67,17 @@ using Dimensions: Dimensions, dimstyle, numdims, getdim
     @test getdim(rpy_deg, 1) == 1.
     @test getdim(rpy_deg, 2) == 2.
     @test getdim(rpy_deg, 3) == 3.
+
+    # Real-vector dimension styles use the orientation itself as the dimension iterator.
+    @test collect(eachdim(dcm)) == collect(dcm)
+    @test collect(eachdim(erp)) == collect(erp)
+    @test collect(eachdim(rv)) == collect(rv)
+
+    # Struct dimension styles flatten their indexed fields into scalar dimensions.
+    @test collect(eachdim(aa)) == [1., 0., 0., 2.]
+    @test collect(eachdim(aa_deg)) == [0., 1., 0., 3.]
+    @test collect(eachdim(rpy)) == [1., 2., 3.]
+    @test collect(eachdim(rpy_deg)) == [1., 2., 3.]
 
 end
 

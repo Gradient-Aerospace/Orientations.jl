@@ -45,6 +45,42 @@ using LinearAlgebra
 
 end
 
+@testset "DCM indexing" begin
+
+    matrix = @SMatrix [
+        1. 4. 7.;
+        2. 5. 8.;
+        3. 6. 9.;
+    ]
+    dcm = DCM(matrix)
+
+    # The primary indexing surface is the nine-element, column-major linear view.
+    @test length(dcm) == 9
+    @test size(dcm) == (9,)
+    @test axes(dcm) == (Base.OneTo(9),)
+    @test axes(dcm, 1) == Base.OneTo(9)
+    @test keys(dcm) == Base.OneTo(9)
+    @test eachindex(dcm) == Base.OneTo(9)
+    @test firstindex(dcm) == 1
+    @test lastindex(dcm) == 9
+    @test collect(dcm) == matrix[:]
+    for k in eachindex(dcm)
+        @test dcm[k] == matrix[k]
+    end
+
+    # Cartesian and more specialized selectors follow the stored StaticMatrix.
+    @test dcm[2, 3] == matrix[2, 3]
+    @test dcm[CartesianIndex(2, 3)] == matrix[CartesianIndex(2, 3)]
+    @test dcm[:, 2] == matrix[:, 2]
+    @test dcm[1:2, 3] == matrix[1:2, 3]
+    @test dcm[SA[1, 5, 9]] == matrix[SA[1, 5, 9]]
+
+    @test_throws BoundsError axes(dcm, 2)
+    @test_throws BoundsError dcm[0]
+    @test_throws BoundsError dcm[4, 1]
+
+end
+
 @testset "dcm2aa" begin
 
     # Test 1: Identity matrix should give zero angle

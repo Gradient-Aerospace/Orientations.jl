@@ -56,6 +56,35 @@
 
 end
 
+@testset "AA indexing" begin
+
+    axis = SA[1., 2., 3.]
+
+    # Radian and degree AxisAngles expose the axis as one element and the angle as another.
+    for aa in (AA(axis, 4.), AADeg(axis, 5.))
+
+        @test length(aa) == 2
+        @test size(aa) == (2,)
+        @test axes(aa) == (Base.OneTo(2),)
+        @test axes(aa, 1) == Base.OneTo(2)
+        @test keys(aa) == Base.OneTo(2)
+        @test eachindex(aa) == Base.OneTo(2)
+        @test firstindex(aa) == 1
+        @test lastindex(aa) == 2
+
+        @test aa[1] == axis
+        @test aa[2] == aa.angle
+        @test collect(aa) == [axis, aa.angle]
+
+        @test_throws BoundsError axes(aa, 2)
+        @test_throws BoundsError aa[0]
+        @test_throws BoundsError aa[3]
+        @test_throws ErrorException setindex!(aa, axis, 1)
+
+    end
+
+end
+
 @testset "AADeg one and rand" begin
 
     z = one(AADeg)

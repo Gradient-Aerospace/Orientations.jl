@@ -50,6 +50,36 @@
 
 end
 
+@testset "RPY indexing" begin
+
+    values = [1., 2., 3.]
+
+    # Radian and degree RPYs expose roll, pitch, and yaw in that order.
+    for rpy in (RPY(values...), RPYDeg(values...))
+
+        @test length(rpy) == 3
+        @test size(rpy) == (3,)
+        @test axes(rpy) == (Base.OneTo(3),)
+        @test axes(rpy, 1) == Base.OneTo(3)
+        @test keys(rpy) == Base.OneTo(3)
+        @test eachindex(rpy) == Base.OneTo(3)
+        @test firstindex(rpy) == 1
+        @test lastindex(rpy) == 3
+
+        @test collect(rpy) == values
+        for k in eachindex(rpy)
+            @test rpy[k] == values[k]
+        end
+
+        @test_throws BoundsError axes(rpy, 2)
+        @test_throws BoundsError rpy[0]
+        @test_throws BoundsError rpy[4]
+        @test_throws ErrorException setindex!(rpy, 1., 1)
+
+    end
+
+end
+
 @testset "RPY Float32 singularities" begin
 
     tol = 1f-5
