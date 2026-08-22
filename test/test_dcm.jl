@@ -68,6 +68,8 @@ end
     # Cartesian and more specialized selectors follow the stored StaticMatrix.
     @test dcm[2, 3] == matrix[2, 3]
     @test dcm[CartesianIndex(2, 3)] == matrix[CartesianIndex(2, 3)]
+    @test dcm[begin, begin] == matrix[begin, begin]
+    @test dcm[end, end] == matrix[end, end]
     @test dcm[:, 2] == matrix[:, 2]
     @test dcm[1:2, 3] == matrix[1:2, 3]
     @test dcm[SA[1, 5, 9]] == matrix[SA[1, 5, 9]]

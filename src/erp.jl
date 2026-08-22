@@ -296,7 +296,6 @@ end
 ##########################
 
 Base.length(::EulerRodriguesParameters) = 4
-Base.eltype(::EulerRodriguesParameters{T}) where {T} = T
 Base.size(::EulerRodriguesParameters) = (4,)
 Base.firstindex(::EulerRodriguesParameters) = 1
 Base.lastindex(::EulerRodriguesParameters) = 4

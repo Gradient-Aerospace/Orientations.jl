@@ -132,6 +132,8 @@ interpolate(a::DCM, b::DCM, f) = erp2dcm(interpolate(dcm2erp(a), dcm2erp(b), f))
 @inline Base.size(::DCM) = (9,)
 @inline Base.firstindex(::DCM) = 1
 @inline Base.lastindex(::DCM) = 9
+@inline Base.firstindex(dcm::DCM, d) = firstindex(dcm.matrix, d)
+@inline Base.lastindex(dcm::DCM, d) = lastindex(dcm.matrix, d)
 @inline Base.getindex(dcm::DCM, args...) = getindex(dcm.matrix, args...)
 @inline Base.iterate(dcm::DCM, state...) = iterate(dcm.matrix, state...)
 

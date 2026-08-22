@@ -232,6 +232,8 @@ end
     erp = ERP(values...)
 
     @test length(erp) == 4
+    @test eltype(erp) == Float64
+    @test eltype(typeof(erp)) == Float64
     @test size(erp) == (4,)
     @test axes(erp) == (Base.OneTo(4),)
     @test firstindex(erp) == 1
@@ -239,6 +241,7 @@ end
 
     # Indices follow the documented x, y, z, scalar field order.
     @test collect(erp) == values
+    @test collect(eltype(typeof(erp)), erp) == values
     for k in 1:length(erp)
         @test erp[k] == values[k]
     end
