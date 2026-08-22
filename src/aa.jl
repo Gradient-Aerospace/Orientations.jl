@@ -169,7 +169,7 @@ interpolate(a::AA, b::AA, f) = erp2aa(interpolate(aa2erp(a), aa2erp(b), f))
 const AxisAngleTypes = Union{AxisAngle, AxisAngleDeg}
 
 Base.length(::AxisAngleTypes) = 2
-Base.eltype(::Union{AxisAngle{T}, AxisAngleDeg{T}}) where {T} =
+Base.eltype(::Type{<:Union{AxisAngle{T}, AxisAngleDeg{T}}}) where {T} =
     Union{T, SVector{3, T}}
 Base.size(::AxisAngleTypes) = (2,)
 Base.firstindex(::AxisAngleTypes) = 1

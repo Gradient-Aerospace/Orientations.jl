@@ -63,7 +63,11 @@ end
     # Radian and degree AxisAngles expose the axis as one element and the angle as another.
     for aa in (AA(axis, 4.), AADeg(axis, 5.))
 
+        iterator_eltype = Union{Float64, SVector{3, Float64}}
+
         @test length(aa) == 2
+        @test eltype(aa) == iterator_eltype
+        @test eltype(typeof(aa)) == iterator_eltype
         @test size(aa) == (2,)
         @test axes(aa) == (Base.OneTo(2),)
         @test firstindex(aa) == 1
@@ -72,6 +76,7 @@ end
         @test aa[1] == axis
         @test aa[2] == aa.angle
         @test collect(aa) == [axis, aa.angle]
+        @test collect(iterator_eltype, aa) == [axis, aa.angle]
 
         @test_throws BoundsError aa[0]
         @test_throws BoundsError aa[3]

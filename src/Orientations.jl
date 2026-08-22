@@ -133,7 +133,6 @@ function interpolate(a::T, b::T, f; kwargs...) where {T <: AbstractOrientation}
 end
 
 "Returns the element type used by this orientation."
-Base.eltype(::AbstractOrientation{T}) where {T} = T
 Base.eltype(::Type{OT}) where {T, OT <: AbstractOrientation{T}} = T
 
 """
