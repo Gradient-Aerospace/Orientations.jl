@@ -1,6 +1,6 @@
 # Orientations.jl Change Log
 
-## Unreleased
+## v1.1.0
 
 * Added indexing behavior on all types.
 * Added Dimensions extension.
