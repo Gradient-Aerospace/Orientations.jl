@@ -1,4 +1,5 @@
-export AxisAngle, AA, AA_F64, AADeg, AADeg_F64
+export AxisAngle, AA, AA_F64
+export AxisAngleDeg, AADeg, AADeg_F64
 export aax, aay, aaz
 
 """
@@ -160,34 +161,37 @@ other(aa::AA) = AA(-aa.axis, -aa.angle)
 # This is also best handled with ERP interpolation.
 interpolate(a::AA, b::AA, f) = erp2aa(interpolate(aa2erp(a), aa2erp(b), f))
 
-#############
-# Iteration #
-#############
+##########################
+# Indexing and Iteration #
+##########################
 
-# Helpful functions for iterating over AxisAngle.
-Base.length(::AA) = 2
-Base.eltype(::AA{T}) where {T} = Union{T, SVector{3, T}}
-Base.size(::AA) = (2,)
+# AxisAngle and AxisAngleDeg have the same indexing behavior.
+const AxisAngleTypes = Union{AxisAngle, AxisAngleDeg}
 
-# Allow a user to iterate over the elements of AA, e.g. for splatting.
-function Base.iterate(aa::AA, state = 1)
+Base.length(::AxisAngleTypes) = 2
+Base.eltype(::Type{<:Union{AxisAngle{T}, AxisAngleDeg{T}}}) where {T} =
+    Union{T, SVector{3, T}}
+Base.size(::AxisAngleTypes) = (2,)
+Base.firstindex(::AxisAngleTypes) = 1
+Base.lastindex(::AxisAngleTypes) = 2
+
+# Allow users to iterate over the fields, e.g. for splatting.
+function Base.iterate(aa::AxisAngleTypes, state = 1)
     state == 1 && return (aa.axis, state + 1)
     state == 2 && return (aa.angle, state + 1)
     return nothing
 end
 
 # Provide linear indexing behavior.
-function Base.getindex(aa::AA, k)
+function Base.getindex(aa::AxisAngleTypes, k)
     k == 1 && return aa.axis
     k == 2 && return aa.angle
     throw(BoundsError(aa, k))
 end
-Base.firstindex(aa::AA) = 1
-Base.lastindex(aa::AA) = 2
 
 # Let's tell the user they can't do this.
-function Base.setindex!(aa::AA, value, k)
-    error("AxisAngle is immutable and cannot support setindex!.")
+function Base.setindex!(aa::AxisAngleTypes, value, k)
+    error("$(nameof(typeof(aa))) is immutable and cannot support setindex!.")
 end
 
 #################

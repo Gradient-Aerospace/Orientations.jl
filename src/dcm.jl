@@ -127,12 +127,22 @@ interpolate(a::DCM, b::DCM, f) = erp2dcm(interpolate(dcm2erp(a), dcm2erp(b), f))
 # Matrix Behavior #
 ###################
 
+# Indexing
+@inline Base.length(::DCM) = 9
+@inline Base.size(::DCM) = (9,)
+@inline Base.firstindex(::DCM) = 1
+@inline Base.lastindex(::DCM) = 9
+@inline Base.firstindex(dcm::DCM, d) = firstindex(dcm.matrix, d)
+@inline Base.lastindex(dcm::DCM, d) = lastindex(dcm.matrix, d)
+@inline Base.getindex(dcm::DCM, args...) = getindex(dcm.matrix, args...)
+@inline Base.iterate(dcm::DCM, state...) = iterate(dcm.matrix, state...)
+
 # Let this behave like a regular matix, insofar as that makes sense for a DCM.
 @inline Base.:*(a::DCM, b::DCM) = DCM(a.matrix * b.matrix)
 @inline Base.:*(dcm::DCM, rhs) = dcm.matrix * rhs
 @inline Base.:*(lhs, dcm::DCM) = lhs * dcm.matrix
-@inline Base.getindex(dcm::DCM, args...) = getindex(dcm.matrix, args...)
 @inline LinearAlgebra.tr(dcm::DCM) = tr(dcm.matrix)
+
 # Note: We don't support broadcasting or scalar multiplication because that probably means
 # the resulting type isn't a DCM any more. If we supported `rate`, that would make sense
 # though.

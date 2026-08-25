@@ -178,3 +178,6 @@ end
     @test convert(RPYDeg_F64, rpy32) isa RPYDeg_F64
 
 end
+
+# We put this on the bottom so that the Dimensions extension is activated last.
+include("test_dimensions_ext.jl")

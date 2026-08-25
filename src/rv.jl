@@ -57,11 +57,16 @@ end
 
 interpolate(a::RV, b::RV, f) = erp2rv(interpolate(rv2erp(a), rv2erp(b), f))
 
-#############
-# Iteration #
-#############
+##########################
+# Indexing and Iteration #
+##########################
 
-# TODO? Do we want to be able to splat the elements of an RV?
+Base.length(::RotationVector) = 3
+Base.size(::RotationVector) = (3,)
+Base.firstindex(::RotationVector) = 1
+Base.lastindex(::RotationVector) = 3
+Base.getindex(rv::RotationVector, args...) = getindex(rv.vector, args...)
+Base.iterate(rv::RotationVector, state...) = iterate(rv.vector, state...)
 
 #################
 # Miscellaneous #

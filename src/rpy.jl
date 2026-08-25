@@ -1,4 +1,5 @@
-export RollPitchYaw, RPY, RPY_F64, RPYDeg, RPYDeg_F64
+export RollPitchYaw, RPY, RPY_F64
+export RollPitchYawDeg, RPYDeg, RPYDeg_F64
 
 """
 Represents an orientation as a roll, pitch, and yaw (rad) from a reference. Yaw is the first
@@ -70,3 +71,36 @@ end
 ##############
 
 # We use the abstract fallback for all operations. RPYs aren't really meant for operations.
+
+##########################
+# Indexing and Iteration #
+##########################
+
+# RollPitchYaw and RollPitchYawDeg have the same indexing behavior.
+const RollPitchYawTypes = Union{RollPitchYaw, RollPitchYawDeg}
+
+Base.length(::RollPitchYawTypes) = 3
+Base.size(::RollPitchYawTypes) = (3,)
+Base.firstindex(::RollPitchYawTypes) = 1
+Base.lastindex(::RollPitchYawTypes) = 3
+
+# Allow users to iterate over the angles, e.g. for splatting.
+function Base.iterate(rpy::RollPitchYawTypes, state = 1)
+    state == 1 && return (rpy.roll, state + 1)
+    state == 2 && return (rpy.pitch, state + 1)
+    state == 3 && return (rpy.yaw, state + 1)
+    return nothing
+end
+
+# Provide linear indexing behavior.
+function Base.getindex(rpy::RollPitchYawTypes, k)
+    k == 1 && return rpy.roll
+    k == 2 && return rpy.pitch
+    k == 3 && return rpy.yaw
+    throw(BoundsError(rpy, k))
+end
+
+# Let's tell the user they can't do this.
+function Base.setindex!(rpy::RollPitchYawTypes, value, k)
+    error("$(nameof(typeof(rpy))) is immutable and cannot support setindex!.")
+end

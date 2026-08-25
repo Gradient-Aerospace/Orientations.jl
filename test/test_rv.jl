@@ -41,6 +41,30 @@ using LinearAlgebra
 
 end
 
+@testset "RV indexing" begin
+
+    vector = SA[1., 2., 3.]
+    rv = RV(vector)
+
+    @test length(rv) == 3
+    @test size(rv) == (3,)
+    @test axes(rv) == (Base.OneTo(3),)
+    @test firstindex(rv) == 1
+    @test lastindex(rv) == 3
+
+    # Scalar and specialized selectors follow the stored StaticVector.
+    @test collect(rv) == collect(vector)
+    for k in 1:length(rv)
+        @test rv[k] == vector[k]
+    end
+    @test rv[:] == vector[:]
+    @test rv[SA[1, 3]] == vector[SA[1, 3]]
+
+    @test_throws BoundsError rv[0]
+    @test_throws BoundsError rv[4]
+
+end
+
 @testset "rv2dcm" begin
 
     # Test 1: Zero rotation vector should give identity matrix

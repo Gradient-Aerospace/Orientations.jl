@@ -291,14 +291,14 @@ function interpolate(
 
 end
 
-#############
-# Iteration #
-#############
+##########################
+# Indexing and Iteration #
+##########################
 
-# Helpful functions for iterating over EulerRodriguesParameters.
 Base.length(::EulerRodriguesParameters) = 4
-Base.eltype(::EulerRodriguesParameters{T}) where {T} = T
 Base.size(::EulerRodriguesParameters) = (4,)
+Base.firstindex(::EulerRodriguesParameters) = 1
+Base.lastindex(::EulerRodriguesParameters) = 4
 
 # Allow a user to iterate over the elements of ERP, e.g. for splatting.
 function Base.iterate(erp::EulerRodriguesParameters, state = 1)
@@ -317,8 +317,6 @@ function Base.getindex(erp::EulerRodriguesParameters, k)
     k == 4 && return erp.s
     throw(BoundsError(erp, k))
 end
-Base.firstindex(erp::EulerRodriguesParameters) = 1
-Base.lastindex(erp::EulerRodriguesParameters) = 4
 
 # Let's tell the user they can't do this.
 function Base.setindex!(erp::EulerRodriguesParameters, value, k)
